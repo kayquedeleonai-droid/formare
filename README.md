@@ -13,24 +13,36 @@ A "sensação de argila" é a soma de quatro camadas:
 3. **Feedback sensorial**: pressão e inclinação da caneta, háptica e som de atrito.
 4. **Ateliê**: banqueta giratória com inércia, armação, luz de estúdio e interface que some.
 
-## Protótipo v0.1 (navegador)
+## Versão atual: v0.2 (navegador)
 
-`index.html` é um protótipo para validar a sensação antes de investir no motor nativo. Abra no navegador (ou sirva a pasta com qualquer servidor estático).
+`index.html` roda direto no navegador e serve para validar a sensação antes do motor nativo.
 
+**Escultura**
 - Malha densa (icosfera nível 7, ~164 mil vértices) com raycast em grade espacial
-- 6 ferramentas: Argila, Polegar, Alisar, Esteca dentada, Laço, Espátula
+- 10 ferramentas em 4 grupos: Modelar (Argila, Polegar, Puxar, Inflar), Acabar (Alisar, Espátula), Detalhar (Esteca dentada, Laço, Beliscar), Proteger (Máscara)
 - Conservação de volume: o material empurrado sobe nas bordas
-- Estado da argila: úmida → couro → seca muda shader e comportamento
-- Som de atrito que reage à velocidade, pressão e ferramenta
-- Pressão da caneta, simetria X, desfazer/refazer, banqueta com inércia
+- Estado da argila (úmida → couro → seca) muda o shader e o comportamento dos pincéis
+- Máscara com Ctrl, inverter e limpar
+- Pressão da caneta, estabilizador, simetria X, cada ferramenta lembra seu tamanho e força
 
-Atalhos: `1–6` ferramentas · `[ ]` tamanho · `Shift` alisar · `Alt` inverter · `X` simetria · `Ctrl+Z` desfazer.
+**Fluxo de trabalho**
+- Biblioteca de peças com miniaturas, salvamento automático a cada gesto (IndexedDB), duplicar e excluir
+- Peças novas a partir de Cabeça base, Esfera, Bloco, Rolo ou Exemplo
+- Desfazer/refazer leve (guarda só os vértices tocados, até 80 passos)
+- Exportar: projeto (.zip, reabre depois), OBJ, STL em milímetros (100 mm de altura) e PNG em 2×
+- Menu radial no Espaço, presets de luz (Ateliê, Janela, Dramática, Neutra), vistas Frente/Lado/Topo/Ajustar
+- Som de atrito que reage à velocidade, pressão, ferramenta e estado da argila
+
+Atalhos: `1–0` ferramentas · `Espaço` menu radial · `Shift` alisar · `Alt` inverter · `Ctrl` máscara · `[ ]` tamanho · `X` simetria · `F` enquadrar · `Ctrl+Z` desfazer · `Ctrl+S` salvar · `?` atalhos.
 
 ## Roadmap
 
 - [ ] Testes de sensação com escultores (caneta Wacom, Apple Pencil)
-- [ ] Topologia dinâmica e remesh por voxel
-- [ ] Núcleo nativo em C++/Rust com renderização Vulkan / DirectX 12 / Metal
+- [ ] Topologia dinâmica e remesh por voxel (resolução onde precisa)
+- [ ] Camadas de escultura e multirresolução
+- [ ] Pincéis com alfas de textura (dedos, tecido, esponja) e curva de queda editável
+- [ ] Sincronização das peças na nuvem
+- [ ] Núcleo nativo em C++/Rust com Vulkan / DirectX 12 / Metal
 - [ ] MVP Windows com suporte a tablet
 - [ ] iPad com háptica do Apple Pencil Pro
 - [ ] Android
