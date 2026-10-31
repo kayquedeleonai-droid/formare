@@ -1,41 +1,47 @@
-# Ateliê de Argila
+# Formare
 
-Aplicativo de escultura 3D com foco em **sensação real de argila**. Bebe da fonte do ZBrush, Nomad e Sculpty, com UI e UX modernas e pensado desde o início para caneta e toque.
+Escultura digital com **sensação de argila real**. Inspirado no ZBrush, Nomad e Sculpty, com interface moderna e pensado para caneta e toque.
 
-Alvo: Windows primeiro, depois iPad/iOS e Android.
+Plataformas: Windows (instalável, com atualização automática) e navegador. iPad e Android depois.
 
-## Tese do produto
+## O processo, como no ateliê
 
-A "sensação de argila" é a soma de quatro camadas:
+1. **Armação** *(opcional)*: arame de Figura humana, Animal, Busto ou Livre, preso numa haste. Mover, Estender, Conectar, Apagar.
+2. **Massa**: Pelota, Rolinho, Placa, Bloco, Cilindro e Arrancar. As peças se fundem com emendas visíveis. Pode começar sem arame.
+3. **Escultura**: 10 pincéis (Argila, Polegar, Puxar, Inflar, Alisar, Espátula, Esteca dentada, Laço, Beliscar, Máscara), com conservação de volume e argila úmida/couro/seca.
+4. **Pintura**: engobes e óxidos, Lavagem que escorre para as cavidades, Polir que revela os relevos. Acabamentos: Argila crua, Terracota, Gesso, Bronze patinado, Mármore.
+5. **Render**: até 4 luzes posicionadas na cena, sombra suave, fundos de estúdio, lente, formatos (4:5, 1:1, 16:9) e exportação até 4K. Vídeo de giro 360°.
 
-1. **Material**: shader com espalhamento suave da luz, grão procedural que não estica, cavidades escurecidas e estados da argila (úmida, couro, seca).
-2. **Comportamento do pincel**: conservação de volume, acúmulo de pelotas, ferramentas físicas reais (polegar, esteca dentada, laço, espátula).
-3. **Feedback sensorial**: pressão e inclinação da caneta, háptica e som de atrito.
-4. **Ateliê**: banqueta giratória com inércia, armação, luz de estúdio e interface que some.
+Peça nova começa direto numa bola de argila; a armação é um recurso a mais.
 
-## Versão atual: v0.3 (navegador)
+Salvamento automático a cada gesto. Exporta projeto (.zip), OBJ com cores, STL em milímetros, PNG e vídeo.
 
-O app segue o processo tradicional do escultor, em três etapas:
+## Estrutura
 
-**1 · Armação** — modelos de arame (Figura humana, Animal, Busto, Livre) presos numa haste sobre a base. Ferramentas: Mover (posar), Estender (puxar arame novo), Conectar, Apagar. Simetria X.
+```
+app/            O app (uma página HTML + three.js de reserva para uso offline)
+electron/       Casca do Windows: janela, salvar arquivos, atualização automática
+build/          Ícone
+.github/        Gera o instalador e publica a versão a cada mudança na main
+docs/           Análise e decisões
+```
 
-**2 · Massa** — a argila vira um volume (campo de distância 112³) e as peças se fundem com emendas visíveis:
-Pelota, Rolinho, Placa, Bloco, Cilindro e Arrancar, com tamanho e irregularidade. "Cobrir o arame" faz a primeira camada.
+## Desenvolver
 
-**3 · Escultura** — a massa é convertida (Surface Nets 2×, relaxamento tangencial) numa malha densa de topologia livre, e entram os 10 pincéis: Argila, Polegar, Puxar, Inflar, Alisar, Espátula, Esteca dentada, Laço, Beliscar, Máscara. Conservação de volume, estado úmido/couro/seco, pressão da caneta, estabilizador.
+```bash
+npm install
+npm start          # abre o Formare no desktop
+npm run dist       # gera o instalador em dist/ (no Windows)
+```
 
-**Fluxo de trabalho** — biblioteca com salvamento automático (IndexedDB), desfazer por etapa, exportar projeto (.zip com armação, massa e escultura), OBJ, STL em mm e PNG. Menu radial (Espaço), Tab troca de etapa, presets de luz e vistas.
+## Atualização automática
+
+1. Cada mudança em `app/`, `electron/` ou `build/` enviada para `main` dispara o workflow **Publicar versão para Windows**.
+2. Ele gera `Formare-Setup-0.4.N.exe` e publica um Release no GitHub.
+3. O Formare instalado procura novas versões ao abrir e a cada 2 horas, baixa em segundo plano e pergunta se quer reiniciar. Se não reiniciar, instala ao fechar.
+
+O instalador ainda não é assinado digitalmente, então o Windows pode mostrar o aviso do SmartScreen na primeira instalação ("Mais informações" → "Executar assim mesmo").
 
 ## Roadmap
 
-**Próximo (v0.4)**
-- [ ] Estúdio de render: pontos de luz posicionáveis, sombras suaves, oclusão ambiente, fundos e lentes, exportação em alta resolução
-- [ ] Pintura sobre a argila: engobes, óxidos, pátinas (bronze, ferro, gesso), lavagem que escorre para as cavidades
-- [ ] Massa que acompanha o arame ao reposar (vínculo das peças ao segmento mais próximo)
-
-**Depois**
-- [ ] Remesh por voxel dentro da escultura (resolução onde precisa)
-- [ ] Camadas de escultura e multirresolução
-- [ ] Pincéis com alfas de contato (polpa do dedo, tecido, esponja)
-- [ ] Sincronização na nuvem
-- [ ] Núcleo nativo C++/Rust com Vulkan / DirectX 12 / Metal, MVP Windows, depois iPad (háptica do Apple Pencil Pro) e Android
+Ver [docs/ANALISE.md](docs/ANALISE.md). Próximos passos: Reamassar (remesh por voxel), alisamento que preserva volume, inclinação da caneta, carimbos de textura, pincéis Barbotina, Fio de corte e Estica.

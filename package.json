@@ -1,0 +1,43 @@
+{
+  "name": "formare",
+  "productName": "Formare",
+  "version": "0.4.0",
+  "description": "Escultura digital com sensação de argila real.",
+  "author": "Formare",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never",
+    "release": "electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "6.3.9"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.formare.app",
+    "productName": "Formare",
+    "copyright": "Formare",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["electron/**/*", "app/**/*", "build/icon.png", "package.json"],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.png",
+      "artifactName": "Formare-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Formare"
+    },
+    "publish": [{ "provider": "github", "owner": "kayquedeleonai-droid", "repo": "formare", "releaseType": "release" }]
+  }
+}

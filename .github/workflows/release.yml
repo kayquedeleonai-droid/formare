@@ -1,0 +1,47 @@
+# A cada mudança no app enviada para a branch main, gera o instalador do Windows
+# e publica um Release. O Formare instalado encontra o Release e se atualiza sozinho.
+name: Publicar versão para Windows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'electron/**'
+      - 'build/**'
+      - 'package.json'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Definir número da versão
+        shell: bash
+        run: |
+          BASE=$(node -p "require('./package.json').version.split('.').slice(0,2).join('.')")
+          VERSION="$BASE.$GITHUB_RUN_NUMBER"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - run: npm ci
+
+      - name: Gerar instalador e publicar
+        run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
