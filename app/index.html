@@ -86,6 +86,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .tip b{display:block;font-weight:600}
 .tip span{color:var(--muted)}
 .tool:hover .tip{opacity:1}
+.rail.wide{display:grid;grid-template-columns:repeat(2,50px);gap:2px}
+.rail.wide .grp{grid-column:1/-1}
+.wireline{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 
 /* ---------- barra inferior ---------- */
 .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(720px, calc(100% - 32px));display:flex;gap:16px;align-items:center;padding:11px 16px;box-sizing:border-box;min-height:62px}
@@ -233,6 +236,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .chev{display:none}
   .rail{top:auto;transform:none;left:calc(16px + env(safe-area-inset-left,0px));right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));flex-direction:row;padding:4px;overflow-x:auto}
   .rail .grp{display:none}
+  .rail.wide{display:flex}
   .tool{width:42px;height:42px;flex:none}
   .tool svg{width:21px;height:21px}
   .tip{display:none}
@@ -247,6 +251,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 <div id="stage"></div>
 <div class="frame-guide" id="frameGuide" hidden></div>
+<svg class="wireline" id="wireLine" hidden><line id="wl" x1="0" y1="0" x2="0" y2="0" stroke="#e0a08c" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/></svg>
 
 <div class="top-left panel">
   <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 19c-1.5-4 0-9 3-11.5S16 5 18 8s0 8-3 10.5S7.5 22 6 19z"/><path d="M10 11c1.5-1 3.5-1 4.5.5"/></svg><span>Formare</span></div>
@@ -312,6 +317,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <div class="pmeter"><i id="pbar"></i></div>
     <small>Pressão</small>
   </div>
+  <div class="pressure" title="Inclinação da caneta" data-for="sculpt">
+    <div class="pmeter"><i id="tbar"></i></div>
+    <small>Incl.</small>
+  </div>
   <div class="field" data-for="render">
     <label for="lens">Lente <output id="lensOut">50 mm</output></label>
     <input type="range" id="lens" min="24" max="135" value="50">
@@ -373,6 +382,17 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <h2>Resolução</h2>
     <div class="seg" id="qualities"></div>
   </div>
+  <div class="group" data-for="sculpt" id="stampGroup">
+    <h2>Carimbo</h2>
+    <div class="chips" id="stamps"></div>
+    <div class="help">Arraste para repetir o carimbo ao longo do gesto. Com Alt, a textura afunda em vez de levantar.</div>
+  </div>
+  <div class="group" data-for="sculpt">
+    <h2>Malha</h2>
+    <div class="seg" id="remeshRes"></div>
+    <button class="btn" id="remeshBtn">Reamassar <span class="kbd">R</span></button>
+    <div class="help">Refaz a malha por igual: desfaz triângulos esticados e abre espaço para detalhe. A pintura e a máscara vão junto. Partes mais finas que a resolução somem.</div>
+  </div>
   <div class="group" data-for="mass sculpt">
     <h2>Estado da argila</h2>
     <input type="range" id="dry" min="0" max="100" value="18" aria-label="Estado da argila, de úmida a seca">
@@ -394,6 +414,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   </div>
   <div class="group" data-for="arm mass sculpt paint render">
     <button class="toggle" id="tSym" role="switch" aria-checked="true" data-for="arm mass sculpt paint"><span>Simetria X<small>Espelha o gesto no outro lado</small></span><span class="switch"></span></button>
+    <button class="toggle" id="tTilt" role="switch" aria-checked="true" data-for="sculpt"><span>Inclinação da caneta<small>Caneta deitada abre a marca e afunda menos</small></span><span class="switch"></span></button>
     <button class="toggle" id="tVol" role="switch" aria-checked="true" data-for="sculpt"><span>Conservar volume<small>Material empurrado sobe nas bordas</small></span><span class="switch"></span></button>
     <button class="toggle" id="tWire" role="switch" aria-checked="true" data-for="sculpt paint render"><span>Mostrar arame<small>Onde a argila não cobriu</small></span><span class="switch"></span></button>
     <button class="toggle" id="tSound" role="switch" aria-checked="true" data-for="arm mass sculpt paint"><span>Som da argila<small>Atrito e pelotas reagem ao gesto</small></span><span class="switch"></span></button>
@@ -503,6 +524,17 @@ const TOOLSETS={
  ],
  render:[]
 };
+TOOLSETS.sculpt.push(
+  {id:'stretch',name:'Estica',grp:'Modelar',key:'e',desc:'Puxa pontas: orelhas, chifres, dedos',size:45,str:.8,snd:[260,.7,.7],icon:'<path d="M5 19c4-1 6-4 7-8s3-6 7-7"/><circle cx="19" cy="4" r="1.5"/>'},
+  {id:'slip',name:'Barbotina',grp:'Acabar',key:'b',desc:'Argila líquida que fecha frestas e funde emendas',size:70,str:.5,snd:[480,.5,.55],icon:'<path d="M7 4h10l-1 4H8z"/><path d="M12 8v5"/><path d="M8 17c1.5-1.5 2.5-2 4-2s2.5.5 4 2c-1 2-2.5 3-4 3s-3-1-4-3z"/>'},
+  {id:'roll',name:'Rolo',grp:'Acabar',key:'o',desc:'Abre a argila como um rolo de massa',size:70,str:.55,snd:[380,.8,.8],icon:'<rect x="6" y="9" width="12" height="6" rx="3"/><path d="M2 12h4M18 12h4"/>'},
+  {id:'crease',name:'Vinco',grp:'Detalhar',key:'v',desc:'Sulco fino com bordas levantadas',size:30,str:.55,snd:[1500,2,.9],icon:'<path d="M3 9c4 0 6 6 9 6s5-6 9-6"/>'},
+  {id:'stamp',name:'Carimbo',grp:'Detalhar',key:'t',desc:'Textura de dedo, tecido, couro ou esponja',size:55,str:.6,snd:[700,1,.6],icon:'<rect x="5" y="13" width="14" height="6" rx="1.5"/><path d="M9 13V9h6v4M10 5h4v4h-4z"/>'},
+  {id:'wire',name:'Fio de corte',grp:'Cortar',key:'c',desc:'Risque uma linha para fatiar a peça',size:40,str:1,snd:[0,1,0],icon:'<path d="M3 20 21 4"/><circle cx="3" cy="20" r="1.6"/><circle cx="21" cy="4" r="1.6"/>'}
+);
+{const GO=['Modelar','Acabar','Detalhar','Cortar','Proteger'];TOOLSETS.sculpt.sort((a,b)=>GO.indexOf(a.grp)-GO.indexOf(b.grp));}
+const STAMPS=[{id:'finger',name:'Polpa do dedo'},{id:'cloth',name:'Tecido'},{id:'leather',name:'Couro'},{id:'sponge',name:'Esponja'}];
+const REMESH_RES=[{v:110,name:'Leve'},{v:160,name:'Médio'},{v:220,name:'Alto'}];
 const TOOLMAP={};Object.values(TOOLSETS).forEach(l=>l.forEach(t=>TOOLMAP[t.id+(l===TOOLSETS.arm&&t.id==='erase'?'':'')]=t));
 TOOLMAP.erase=TOOLSETS.paint[3];TOOLMAP.armErase=TOOLSETS.arm[3];TOOLSETS.arm[3].id='armErase';
 const toolPrefs={};Object.values(TOOLSETS).forEach(l=>l.forEach(t=>toolPrefs[t.id]={size:t.size||60,str:t.str||.5}));
@@ -747,7 +779,7 @@ function raycastMesh(o,d){
 /* =================== Pincéis =================== */
 const falloff=t=>{if(t>=1)return 0;const a=1-t*t;return a*a;};
 const falloffHard=t=>{if(t>=1)return 0;if(t<.5)return 1;const u=(t-.5)/.5,a=1-u*u;return a*a;};
-const settings={size:70,strength:.55,stab:.3,irr:.55,dry:.18,sym:true,vol:true,sound:true,wire:true,clay:0,light:'atelie',finish:'clay',paintColor:PAINTS[2].hex,
+const settings={tilt:true,stamp:'finger',remeshRes:160,size:70,strength:.55,stab:.3,irr:.55,dry:.18,sym:true,vol:true,sound:true,wire:true,clay:0,light:'atelie',finish:'clay',paintColor:PAINTS[2].hex,
   render:{lights:RENDER_PRESETS[0].lights.map(l=>({...l,on:true})),sel:0,bg:'grafite',base:true,vig:true,lens:50,ev:0,format:'tela',quality:2400}};
 let strokeSeed=[0,0,0];
 let strokeId=1,recIdx=[],recPos=[],recMask=[],recPaint=[];
@@ -762,8 +794,17 @@ function smoothPass(cnt,r,amount){
     const w=falloff(d/r)*amount*(1-mask[i]);dlt[k*3]=(ax/c-pos[i*3])*w;dlt[k*3+1]=(ay/c-pos[i*3+1])*w;dlt[k*3+2]=(az/c-pos[i*3+2])*w;}
   for(let k=0;k<cnt;k++){const i=sel[k]*3;pos[i]+=dlt[k*3];pos[i+1]+=dlt[k*3+1];pos[i+2]+=dlt[k*3+2];}
 }
+const penTilt={flat:0,dir:null,deg:90};
+function stampAlpha(u,v){
+  const q=Math.hypot(u,v);if(q>=1)return 0;const st=settings.stamp,sd=strokeSeed[0];
+  if(st==='finger'){const qq=Math.hypot(u,v*1.3),ang=Math.atan2(v,u);if(qq>=1)return 0;const k=1-qq*qq;return -.85*k*k+.2*Math.cos(qq*44+.7*Math.sin(ang*2+sd))*k;}
+  if(st==='cloth')return .5*(Math.sin(u*24)*Math.sign(Math.sin(v*12))+Math.sin(v*24)*Math.sign(Math.sin(u*12)))*.5;
+  if(st==='leather'){const n=vnoise(u*5+sd,v*5,sd*.3);return -Math.max(0,1-Math.abs(2*n-1)*6)*.9+.12*(vnoise(u*15,v*15,1+sd)-.5);}
+  const n=vnoise(u*13+sd,v*13,sd);return n>.6?-Math.min(1,(n-.6)*5):.08*(n-.3);
+}
 function dab(P,T,r,s,tl,invert,moveLen){
-  const R=r*1.7,cnt=gather(P,R);if(!cnt)return;
+  const E=(settings.tilt&&penTilt.dir&&penTilt.flat>.08)?1+penTilt.flat*1.3:1;
+  const R=r*1.7*(tl==='roll'?1.7:E),cnt=gather(P,R);if(!cnt)return;
   recordSel(cnt);const dry=settings.dry;
   if(tl==='mask'){const target=invert?0:1;for(let k=0;k<cnt;k++){const d=dist[k];if(d>=r)continue;const i=sel[k];mask[i]+=(target-mask[i])*Math.min(1,falloffHard(d/r)*s*.9);}sculptDirty=true;return;}
   let nx=0,ny=0,nz=0,cx=0,cy=0,cz=0,ws=0;
@@ -773,6 +814,10 @@ function dab(P,T,r,s,tl,invert,moveLen){
   let tx=T[0],ty=T[1],tz=T[2];const tn=tx*nx+ty*ny+tz*nz;tx-=nx*tn;ty-=ny*tn;tz-=nz*tn;
   let tl2=Math.hypot(tx,ty,tz);if(tl2<1e-6){tx=ny;ty=-nx;tz=0;tl2=Math.hypot(tx,ty,tz)||1;}tx/=tl2;ty/=tl2;tz/=tl2;
   const bx=ny*tz-nz*ty,by=nz*tx-nx*tz,bz=nx*ty-ny*tx;
+  if(E>1){let d=penTilt.dir;const dn=d[0]*nx+d[1]*ny+d[2]*nz;d=norm([d[0]-nx*dn,d[1]-ny*dn,d[2]-nz*dn]);
+    for(let k=0;k<cnt;k++){const i=sel[k]*3,qx=pos[i]-P[0],qy=pos[i+1]-P[1],qz=pos[i+2]-P[2],a=qx*d[0]+qy*d[1]+qz*d[2],d2=dist[k]*dist[k];dist[k]=Math.sqrt(Math.max(0,d2-a*a)+(a/E)*(a/E));}
+    if(tl!=='stretch'&&tl!=='thumb')s*=1-.45*penTilt.flat;}
+  if(tl==='roll'){for(let k=0;k<cnt;k++){const i=sel[k]*3,qx=pos[i]-P[0],qy=pos[i+1]-P[1],qz=pos[i+2]-P[2],a=(qx*tx+qy*ty+qz*tz)/.6,b=(qx*bx+qy*by+qz*bz)/1.7,h=qx*nx+qy*ny+qz*nz;dist[k]=Math.sqrt(a*a+b*b+h*h);}}
   const sign=invert?-1:1;let removed=0;
   if(tl==='smooth'){smoothPass(cnt,r,.55*s*(1-.7*dry)+.05);}
   else{
@@ -790,13 +835,19 @@ function dab(P,T,r,s,tl,invert,moveLen){
       else if(tl==='carve'){const crumb=1-dry*.6+dry*1.2*vnoise(pos[i]*pf*2.5,pos[i+1]*pf*2.5,pos[i+2]*pf*2.5);const a=-r*.045*s*(1+.2*dry)*falloffHard(t)*crumb*sign;ox=nx*a;oy=ny*a;oz=nz*a;}
       else if(tl==='pinch'){const u=(pos[i]-P[0])*bx+(pos[i+1]-P[1])*by+(pos[i+2]-P[2])*bz,a=-u*f*s*.22*sign*(1-.4*dry),dn=-r*.012*f*s*sign;ox=bx*a+nx*dn;oy=by*a+ny*dn;oz=bz*a+nz*dn;}
       else if(tl==='flatten'){const a=-h*f*s*.3*(1-.3*dry);ox=nx*a;oy=ny*a;oz=nz*a;}
+      else if(tl==='stretch'){const w=Math.pow(f,.6)*s*1.15,mv=Math.min(moveLen,r*.6);ox=tx*mv*w;oy=ty*mv*w;oz=tz*mv*w;}
+      else if(tl==='slip'){const fl=clamp(cav[v],0,1.2)*meanEdge*.6*f*s;ox=nor[i]*fl;oy=nor[i+1]*fl;oz=nor[i+2]*fl;}
+      else if(tl==='roll'){const a=-(h+r*.04*s)*f*s*.4*(1-.3*dry);ox=nx*a;oy=ny*a;oz=nz*a;}
+      else if(tl==='crease'){const u=(pos[i]-P[0])*bx+(pos[i+1]-P[1])*by+(pos[i+2]-P[2])*bz,gq=Math.exp(-(u*u)/(r*r*.05)),dn=-r*.07*s*gq*f*sign,a=-u*f*s*.12;ox=nx*dn+bx*a;oy=ny*dn+by*a;oz=nz*dn+bz*a;}
+      else if(tl==='stamp'){const qx=pos[i]-P[0],qy=pos[i+1]-P[1],qz=pos[i+2]-P[2],u=(qx*tx+qy*ty+qz*tz)/r,w2=(qx*bx+qy*by+qz*bz)/r,hg=stampAlpha(u,w2)*r*.06*s*sign*falloffHard(t);ox=nor[i]*hg;oy=nor[i+1]*hg;oz=nor[i+2]*hg;}
       ox*=fm;oy*=fm;oz*=fm;pos[i]+=ox;pos[i+1]+=oy;pos[i+2]+=oz;
       const inward=-(ox*nx+oy*ny+oz*nz);if(inward>0)removed+=inward;
     }
     if(tl==='thumb'&&dry<.7)smoothPass(cnt,r,.18*(1-dry));
+    if(tl==='slip')smoothPass(cnt,r,.3*s+.05);
   }
-  if(settings.vol&&removed>0&&(tl==='thumb'||tl==='carve'||tl==='pinch')){
-    const share=(tl==='pinch'?.5:.85)-.45*dry;
+  if(settings.vol&&removed>0&&(tl==='thumb'||tl==='carve'||tl==='pinch'||tl==='crease')){
+    const share=(tl==='pinch'?.5:tl==='crease'?.6:.85)-.45*dry;
     if(share>0){let gs=0;
       for(let k=0;k<cnt;k++){const d=dist[k];if(d<r*.85){dlt[k*3]=0;continue;}
         let g=Math.sin(Math.PI*Math.min(1,(d-r*.85)/(R-r*.85)))*(1-mask[sel[k]]);
@@ -827,7 +878,7 @@ function updateList(list,cnt){
 const PAINT_IDS=new Set(['brush','wash','polish','erase']);
 function applyDab(P,T,r,s,tl,inv,ml){
   const fn=PAINT_IDS.has(tl)?((Q,TT)=>paintDab(Q,r,s,tl)):((Q,TT)=>dab(Q,TT,r,s,tl,inv,ml));
-  fn(P,T);if(settings.sym&&Math.abs(P[0])>r*.15)fn(mirror(P),[-T[0],T[1],T[2]]);
+  fn(P,T);if(settings.sym&&Math.abs(P[0])>r*.15){const td=penTilt.dir;if(td)penTilt.dir=[-td[0],td[1],td[2]];fn(mirror(P),[-T[0],T[1],T[2]]);penTilt.dir=td;}
 }
 let grab=null;
 function grabStart(P,r,s,rayD){
@@ -843,6 +894,81 @@ function grabMove(ray){
   const P=rayPlane(ray,grab.P0,grab.n);if(!P)return null;const off=sub(P,grab.P0);
   grab.sets.forEach((st,si)=>{const ox=si?-off[0]:off[0];for(let k=0;k<st.ids.length;k++){const v=st.ids[k]*3,w=st.w[k];pos[v]=st.orig[k*3]+ox*w;pos[v+1]=st.orig[k*3+1]+off[1]*w;pos[v+2]=st.orig[k*3+2]+off[2]*w;}});
   updateList(grab.ids,grab.ids.length);return P;
+}
+
+/* =================== Reamassar (remesh por voxel) =================== */
+function closestTri(px,py,pz,f,out){
+  const a=idx[f*3]*3,b=idx[f*3+1]*3,c=idx[f*3+2]*3;
+  const ax=pos[a],ay=pos[a+1],az=pos[a+2],abx=pos[b]-ax,aby=pos[b+1]-ay,abz=pos[b+2]-az,acx=pos[c]-ax,acy=pos[c+1]-ay,acz=pos[c+2]-az,apx=px-ax,apy=py-ay,apz=pz-az;
+  const d1=abx*apx+aby*apy+abz*apz,d2=acx*apx+acy*apy+acz*apz;let u,v,w;
+  if(d1<=0&&d2<=0){u=1;v=0;w=0;}else{
+    const bpx=px-pos[b],bpy=py-pos[b+1],bpz=pz-pos[b+2],d3=abx*bpx+aby*bpy+abz*bpz,d4=acx*bpx+acy*bpy+acz*bpz;
+    if(d3>=0&&d4<=d3){u=0;v=1;w=0;}else{const vc=d1*d4-d3*d2;
+      if(vc<=0&&d1>=0&&d3<=0){const t=d1/(d1-d3);u=1-t;v=t;w=0;}else{
+        const cpx=px-pos[c],cpy=py-pos[c+1],cpz=pz-pos[c+2],d5=abx*cpx+aby*cpy+abz*cpz,d6=acx*cpx+acy*cpy+acz*cpz;
+        if(d6>=0&&d5<=d6){u=0;v=0;w=1;}else{const vb=d5*d2-d1*d6;
+          if(vb<=0&&d2>=0&&d6<=0){const t=d2/(d2-d6);u=1-t;v=0;w=t;}else{const va=d3*d6-d5*d4;
+            if(va<=0&&(d4-d3)>=0&&(d5-d6)>=0){const t=(d4-d3)/((d4-d3)+(d5-d6));u=0;v=1-t;w=t;}
+            else{const dn=1/(va+vb+vc);v=vb*dn;w=vc*dn;u=1-v-w;}}}}}}
+  const qx=ax+abx*v+acx*w,qy=ay+aby*v+acy*w,qz=az+abz*v+acz*w;out[0]=u;out[1]=v;out[2]=w;out[3]=qx;out[4]=qy;out[5]=qz;
+  return(px-qx)*(px-qx)+(py-qy)*(py-qy)+(pz-qz)*(pz-qz);
+}
+function remesh(cells,clip){
+  const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];for(let i=0;i<nV*3;i+=3)for(let k=0;k<3;k++){mn[k]=Math.min(mn[k],pos[i+k]);mx[k]=Math.max(mx[k],pos[i+k]);}
+  const ext=Math.max(mx[0]-mn[0],mx[1]-mn[1],mx[2]-mn[2]);let cs=ext/cells;const pad=3;
+  let nx=Math.ceil((mx[0]-mn[0])/cs)+2*pad+1,ny=Math.ceil((mx[1]-mn[1])/cs)+2*pad+1,nz=Math.ceil((mx[2]-mn[2])/cs)+2*pad+1;
+  while(nx*ny*nz>36e6){cs*=1.15;nx=Math.ceil((mx[0]-mn[0])/cs)+2*pad+1;ny=Math.ceil((mx[1]-mn[1])/cs)+2*pad+1;nz=Math.ceil((mx[2]-mn[2])/cs)+2*pad+1;}
+  const ox=mn[0]-pad*cs,oy=mn[1]-pad*cs,oz=mn[2]-pad*cs,NN=nx*ny*nz,YZ=ny*nz;
+  const g=new Float32Array(NN).fill(Infinity),tri=new Int32Array(NN).fill(-1),band=1.6*cs,band2=band*band,out=new Float64Array(6);
+  for(let f=0;f<nF;f++){const a=idx[f*3]*3,b=idx[f*3+1]*3,c=idx[f*3+2]*3;
+    const i0=Math.max(0,Math.floor((Math.min(pos[a],pos[b],pos[c])-band-ox)/cs)),i1=Math.min(nx-1,Math.ceil((Math.max(pos[a],pos[b],pos[c])+band-ox)/cs));
+    const j0=Math.max(0,Math.floor((Math.min(pos[a+1],pos[b+1],pos[c+1])-band-oy)/cs)),j1=Math.min(ny-1,Math.ceil((Math.max(pos[a+1],pos[b+1],pos[c+1])+band-oy)/cs));
+    const k0=Math.max(0,Math.floor((Math.min(pos[a+2],pos[b+2],pos[c+2])-band-oz)/cs)),k1=Math.min(nz-1,Math.ceil((Math.max(pos[a+2],pos[b+2],pos[c+2])+band-oz)/cs));
+    for(let i=i0;i<=i1;i++){const px=ox+i*cs;for(let j=j0;j<=j1;j++){const py=oy+j*cs;let q=i*YZ+j*nz+k0;for(let k=k0;k<=k1;k++,q++){
+      const d2=closestTri(px,py,oz+k*cs,f,out);if(d2<band2&&d2<g[q]){g[q]=d2;tri[q]=f;}}}}}
+  // sinal: perto da superfície pela normal; longe dela, por preenchimento a partir das bordas
+  const outside=new Uint8Array(NN),queue=new Int32Array(NN);let qh=0,qt=0;
+  const push=q=>{if(!outside[q]&&tri[q]<0){outside[q]=1;queue[qt++]=q;}};
+  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){push(i*YZ+j*nz);push(i*YZ+j*nz+nz-1);}
+  for(let i=0;i<nx;i++)for(let k=0;k<nz;k++){push(i*YZ+k);push(i*YZ+(ny-1)*nz+k);}
+  for(let j=0;j<ny;j++)for(let k=0;k<nz;k++){push(j*nz+k);push((nx-1)*YZ+j*nz+k);}
+  while(qh<qt){const q=queue[qh++],i=(q/YZ)|0,j=((q-i*YZ)/nz)|0,k=q-i*YZ-j*nz;
+    if(i>0)push(q-YZ);if(i<nx-1)push(q+YZ);if(j>0)push(q-nz);if(j<ny-1)push(q+nz);if(k>0)push(q-1);if(k<nz-1)push(q+1);}
+  for(let q=0;q<NN;q++){const t=tri[q];
+    if(t<0){g[q]=outside[q]?band*2:-band*2;continue;}
+    const i=(q/YZ)|0,j=((q-i*YZ)/nz)|0,k=q-i*YZ-j*nz,px=ox+i*cs,py=oy+j*cs,pz=oz+k*cs;closestTri(px,py,pz,t,out);
+    const A=idx[t*3]*3,B=idx[t*3+1]*3,C=idx[t*3+2]*3,nnx=nor[A]*out[0]+nor[B]*out[1]+nor[C]*out[2],nny=nor[A+1]*out[0]+nor[B+1]*out[1]+nor[C+1]*out[2],nnz=nor[A+2]*out[0]+nor[B+2]*out[1]+nor[C+2]*out[2];
+    const sg=(px-out[3])*nnx+(py-out[4])*nny+(pz-out[5])*nnz>=0?1:-1;g[q]=sg*Math.sqrt(g[q]);}
+  if(clip){for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)for(let k=0;k<nz;k++){const q=i*YZ+j*nz+k,dp=(ox+i*cs-clip.P[0])*clip.n[0]+(oy+j*cs-clip.P[1])*clip.n[1]+(oz+k*cs-clip.P[2])*clip.n[2];if(dp>g[q])g[q]=dp;}}
+  // malha nova (Surface Nets)
+  const vmap=new Int32Array(NN).fill(-1),P=[],I=[],cv=new Float64Array(8);
+  const vert=(i,j,k)=>{const q=i*YZ+j*nz+k;if(vmap[q]>=0)return vmap[q];
+    for(let n=0;n<8;n++)cv[n]=g[q+(n&1)*YZ+((n>>1)&1)*nz+((n>>2)&1)];let sx=0,sy=0,sz=0,c=0;
+    for(let e=0;e<12;e++){const e0=CE[e][0],e1=CE[e][1],v0=cv[e0],v1=cv[e1];if((v0<0)!==(v1<0)){const t=v0/(v0-v1);sx+=(e0&1)+((e1&1)-(e0&1))*t;sy+=((e0>>1)&1)+(((e1>>1)&1)-((e0>>1)&1))*t;sz+=((e0>>2)&1)+(((e1>>2)&1)-((e0>>2)&1))*t;c++;}}
+    if(!c){sx=sy=sz=.5;c=1;}const v=P.length/3;P.push(ox+(i+sx/c)*cs,oy+(j+sy/c)*cs,oz+(k+sz/c)*cs);vmap[q]=v;return v;};
+  const quad=(a,b,c,d,inside)=>{if(inside)I.push(a,b,c,a,c,d);else I.push(a,c,b,a,d,c);};
+  for(let i=0;i<nx-1;i++)for(let j=0;j<ny-1;j++)for(let k=0;k<nz-1;k++){const q=i*YZ+j*nz+k,in0=g[q]<0;
+    if((g[q+YZ]<0)!==in0&&j>0&&k>0)quad(vert(i,j-1,k-1),vert(i,j,k-1),vert(i,j,k),vert(i,j-1,k),in0);
+    if((g[q+nz]<0)!==in0&&i>0&&k>0)quad(vert(i-1,j,k-1),vert(i-1,j,k),vert(i,j,k),vert(i,j,k-1),in0);
+    if((g[q+1]<0)!==in0&&i>0&&j>0)quad(vert(i-1,j-1,k),vert(i,j-1,k),vert(i,j,k),vert(i-1,j,k),in0);}
+  if(!I.length)return false;
+  // leva pintura e máscara para a malha nova
+  const nP=new Float32Array(P),n2=nP.length/3,nM=new Float32Array(n2),nPt=new Float32Array(n2*4);
+  for(let v=0;v<n2;v++){const px=nP[v*3],py=nP[v*3+1],pz=nP[v*3+2],i=clamp(Math.round((px-ox)/cs),0,nx-1),j=clamp(Math.round((py-oy)/cs),0,ny-1),k=clamp(Math.round((pz-oz)/cs),0,nz-1);
+    let t=tri[i*YZ+j*nz+k];
+    if(t<0){for(let di=-1;di<=1&&t<0;di++)for(let dj=-1;dj<=1&&t<0;dj++)for(let dk=-1;dk<=1&&t<0;dk++){const ii=i+di,jj=j+dj,kk=k+dk;if(ii>=0&&jj>=0&&kk>=0&&ii<nx&&jj<ny&&kk<nz)t=tri[ii*YZ+jj*nz+kk];}}
+    if(t<0)continue;closestTri(px,py,pz,t,out);const A=idx[t*3],B=idx[t*3+1],C=idx[t*3+2];
+    nM[v]=mask[A]*out[0]+mask[B]*out[1]+mask[C]*out[2];for(let c=0;c<4;c++)nPt[v*4+c]=paint[A*4+c]*out[0]+paint[B*4+c]*out[1]+paint[C*4+c]*out[2];}
+  setMesh(nP,new Uint32Array(I),nM,nPt);relax(1,.4);recomputeAll();buildGrid();syncSculptState();if(sculptState)sculptState.edited=true;
+  return true;
+}
+function syncSculptState(){if(sculptState){sculptState.pos=pos;sculptState.idx=idx;sculptState.mask=mask;sculptState.paint=paint;}}
+async function doRemesh(clip,label){
+  if(!nV)return;const prev={pos,idx,mask,paint};
+  await busy(clip?'Cortando a peça…':'Reamassando a argila…');let ok=false;
+  try{ok=remesh(settings.remeshRes,clip);}finally{$('busy').hidden=true;}
+  if(!ok){setMesh(prev.pos,prev.idx,prev.mask,prev.paint);syncSculptState();toast(clip?'O corte removeria a peça inteira':'Não foi possível reamassar');return;}
+  pushHist({mesh:prev,label:label||'Reamassar'});scheduleSave();toast((label||'Reamassada')+': '+nV.toLocaleString('pt-BR')+' vértices');
 }
 
 /* =================== Cena =================== */
@@ -1206,7 +1332,8 @@ function swapSculpt(e){
 }
 function doUndo(redo){
   if(mode)return;const h=H(),from=redo?h.r:h.u,to=redo?h.u:h.r;if(!from.length)return;const e=from.pop();
-  if(stage==='sculpt'||stage==='paint'){swapSculpt(e);if(sculptState)sculptState.edited=true;}
+  if(e.mesh){const cur={pos,idx,mask,paint};setMesh(e.mesh.pos,e.mesh.idx,e.mesh.mask,e.mesh.paint);e.mesh=cur;syncSculptState();}
+  else if(stage==='sculpt'||stage==='paint'){swapSculpt(e);if(sculptState)sculptState.edited=true;}
   else if(stage==='mass'){
     if(redo){e.ops.forEach(op=>{ops.push(op);applyOp(op,true);});}else{ops.splice(ops.length-e.ops.length,e.ops.length);replayField();}
     opsVer++;fieldVer=opsVer;updateCounts();
@@ -1260,16 +1387,28 @@ const inner=new THREE.Mesh(new THREE.RingGeometry(.48,.5,48),new THREE.MeshBasic
 function showCursor(hit,r){if(!hit){cursor.visible=false;return;}
   const wp=new THREE.Vector3(...hit.P).applyMatrix4(group.matrixWorld),wn=new THREE.Vector3(...hit.N).transformDirection(group.matrixWorld);
   cursor.position.copy(wp).addScaledVector(wn,.004);cursor.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),wn);cursor.scale.setScalar(r);cursor.visible=true;
+  if(stage==='sculpt'&&settings.tilt&&penTilt.dir&&penTilt.flat>.08){const td=new THREE.Vector3(...penTilt.dir).transformDirection(group.matrixWorld);td.addScaledVector(wn,-td.dot(wn)).normalize();
+    const lx=new THREE.Vector3(1,0,0).applyQuaternion(cursor.quaternion);const ang=Math.atan2(new THREE.Vector3().crossVectors(lx,td).dot(wn),lx.dot(td));
+    cursor.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(wn,ang));cursor.scale.set(r*(1+penTilt.flat*1.3),r,r);}
   const t=activeTool();
   if(stage==='paint')ringMat.color.set(t==='erase'||t==='polish'?0xf3e8d8:settings.paintColor);
   else ringMat.color.set(t==='mask'?0x9fb8da:t==='cut'?0xe0a08c:(altDown&&stage==='sculpt'&&t!=='smooth'?0x9fc3e6:(t==='smooth'?0xd6e7c9:0xf3e8d8)));
   inner.visible=(stage==='sculpt'||stage==='paint')&&settings.stab>.05&&t!=='grab';}
+function readTilt(e){
+  penTilt.flat=0;penTilt.dir=null;penTilt.deg=90;
+  if(e.pointerType==='pen'&&settings.tilt){const tX=e.tiltX||0,tY=e.tiltY||0;
+    if(tX||tY){const a=Math.tan(tX*Math.PI/180),b=Math.tan(tY*Math.PI/180),m=Math.hypot(a,b)||1,alt=Math.atan2(1,m);
+      penTilt.flat=clamp(1-alt/(Math.PI/2),0,.9);penTilt.deg=Math.round(alt*180/Math.PI);
+      const right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),up=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
+      const w=right.multiplyScalar(a/m).add(up.multiplyScalar(-b/m)).transformDirection(new THREE.Matrix4().copy(group.matrixWorld).invert());penTilt.dir=[w.x,w.y,w.z];}}
+  $('tbar').style.height=(penTilt.flat/.9*100).toFixed(0)+'%';
+}
 function pressureOf(e){if(e.pointerType==='mouse')return 1;const p=e.pressure||.5;return Math.pow(clamp(p,.05,1),.8);}
 
 canvas.addEventListener('pointerdown',e=>{
   canvas.focus({preventScroll:true});closeMenus();closeRadial();initAudio();if(actx&&actx.state==='suspended')actx.resume();
   if(spin)return;
-  canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  try{canvas.setPointerCapture(e.pointerId);}catch(_){}pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(pointers.size===2){if(mode==='sculpt')endStroke();if(mode==='mass')endMass();if(mode==='armdrag')endArmDrag();lightDrag=null;mode='pinch';const pts=[...pointers.values()];
     pinchStart={d:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),dist:camDist,mx:(pts[0].x+pts[1].x)/2,my:(pts[0].y+pts[1].y)/2};return;}
   if(pointers.size>2)return;
@@ -1280,6 +1419,7 @@ canvas.addEventListener('pointerdown',e=>{
     startRotate();return;}
   if(stage==='arm'){if(!armPointerDown(e))startRotate();return;}
   if(stage==='mass'){const {hit}=pickMass(e.clientX,e.clientY);if(!hit){startRotate();return;}massDown(e,hit);return;}
+  if(stage==='sculpt'&&curTool()==='wire'&&!shiftDown&&!ctrlDown){mode='wirecut';wireCut={x0:e.clientX,y0:e.clientY,x1:e.clientX,y1:e.clientY,alt:altDown};drawWire();return;}
   const {hit,ray}=pickSculpt(e.clientX,e.clientY);
   if(hit){
     camAnim=null;mode='sculpt';strokeTool=stage==='paint'?(altDown?'erase':curTool()):(ctrlDown?'mask':shiftDown?'smooth':curTool());strokeDabs=0;beginRecord();
@@ -1296,6 +1436,7 @@ canvas.addEventListener('pointermove',e=>{
   if(mode==='rotate'){const dx=e.clientX-last.sx,dy=e.clientY-last.sy,now=performance.now();yaw+=dx*.008;pitch=clamp(pitch+dy*.006,-.9,1.3);
     yawVel=yawVel*.5+(dx*.008)*.5/Math.max(1,(now-last.time)/16);last.sx=e.clientX;last.sy=e.clientY;last.time=now;return;}
   if(mode==='light'){const l=settings.render.lights[lightDrag.i];l.az+=(e.clientX-lightDrag.sx)*.012;l.el=clamp(l.el-(e.clientY-lightDrag.sy)*.01,-.35,1.5);lightDrag.sx=e.clientX;lightDrag.sy=e.clientY;applyLighting();placeGizmos();return;}
+  if(mode==='wirecut'){wireCut.x1=e.clientX;wireCut.y1=e.clientY;drawWire();return;}
   if(mode==='armdrag'){armDragMove(e);return;}
   if(mode==='mass'){massMove(e);return;}
   if(mode==='sculpt'){
@@ -1310,12 +1451,27 @@ canvas.addEventListener('pointermove',e=>{
   const {hit}=pickSculpt(e.clientX,e.clientY);showCursor(hit,hit?worldRadius(hit.P):0);
 });
 function endPointer(e){pointers.delete(e.pointerId);
-  if(mode==='sculpt')endStroke();else if(mode==='mass')endMass();else if(mode==='armdrag')endArmDrag();else if(mode==='light'){lightDrag=null;mode=null;canvas.style.cursor='';scheduleSave();}
+  if(mode==='wirecut'){const w=wireCut;wireCut=null;mode=null;$('wireLine').hidden=true;doWireCut(w);}
+  else if(mode==='sculpt')endStroke();else if(mode==='mass')endMass();else if(mode==='armdrag')endArmDrag();else if(mode==='light'){lightDrag=null;mode=null;canvas.style.cursor='';scheduleSave();}
   if(mode==='pinch'&&pointers.size<2){mode=null;pointers.clear();return;}if(pointers.size===0){mode=null;$('pbar').style.height='0%';}}
 canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);
 canvas.addEventListener('pointerleave',()=>{if(!mode)cursor.visible=false;});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 canvas.addEventListener('wheel',e=>{e.preventDefault();camAnim=null;camDist=clamp(camDist*Math.exp(e.deltaY*.0012),1.6,26);},{passive:false});
+
+/* --- Fio de corte --- */
+let wireCut=null;
+function drawWire(){const l=$('wl');$('wireLine').hidden=false;l.setAttribute('x1',wireCut.x0);l.setAttribute('y1',wireCut.y0);l.setAttribute('x2',wireCut.x1);l.setAttribute('y2',wireCut.y1);}
+async function doWireCut(w){
+  if(!w||Math.hypot(w.x1-w.x0,w.y1-w.y0)<20){toast('Risque uma linha atravessando a peça');return;}
+  const b=meshBounds(),r1=objRay(w.x0,w.y0),r2=objRay(w.x1,w.y1),d=norm(add(r1.d,r2.d)),vn=mul(d,-1);
+  const P1=rayPlane(r1,b.c,vn),P2=rayPlane(r2,b.c,vn);if(!P1||!P2)return;
+  let n=norm(cross(sub(P2,P1),d));let pc=0,nc=0;
+  for(let i=0;i<nV*3;i+=3){if((pos[i]-P1[0])*n[0]+(pos[i+1]-P1[1])*n[1]+(pos[i+2]-P1[2])*n[2]>0)pc++;else nc++;}
+  if(!pc||!nc){toast('O fio não passou pela peça');return;}
+  if((pc>nc)!==w.alt)n=mul(n,-1);
+  await doRemesh({P:P1,n},'Corte');
+}
 
 /* --- Armação --- */
 function armPointerDown(e){
@@ -1415,7 +1571,7 @@ function coverWire(){
 
 /* --- Escultura e pintura: traço --- */
 function stroke(e,first){
-  const press=pressureOf(e);$('pbar').style.height=(press*100).toFixed(0)+'%';
+  readTilt(e);const press=pressureOf(e);$('pbar').style.height=(press*100).toFixed(0)+'%';
   const tl=strokeTool,invert=altDown,s=settings.strength*(.25+.75*press),follow=1-settings.stab*.88;
   const sx=first?e.clientX:last.sx+(e.clientX-last.sx)*follow,sy=first?e.clientY:last.sy+(e.clientY-last.sy)*follow;
   const now=performance.now(),pxDist=first?0:Math.hypot(sx-last.sx,sy-last.sy),pxR=settings.size*(e.pointerType==='pen'?(.7+.3*press):1);
@@ -1426,7 +1582,7 @@ function stroke(e,first){
     const {hit,ray}=pickSculpt(ax,ay);let P,N;
     if(hit){P=hit.P;N=hit.N;lastHit=hit;}
     else{if(stage==='paint')continue;const tt=dot(sub(last.P,ray.o),ray.d);P=add(ray.o,mul(ray.d,tt));N=lastHit.N;}
-    const r=worldRadius(P,pxR),dv=sub(P,last.P),ml=len(dv),spacing=r*(tl==='rake'||tl==='pinch'?.08:PAINT_IDS.has(tl)?.15:.12);
+    const r=worldRadius(P,pxR),dv=sub(P,last.P),ml=len(dv),spacing=r*(tl==='rake'||tl==='pinch'||tl==='stretch'?.08:tl==='stamp'?.85:PAINT_IDS.has(tl)?.15:.12);
     if(first||ml>=spacing){
       let T=ml>1e-6?mul(dv,1/ml):(last.T||[1,0,0]);
       if(first){const cr=new THREE.Vector3(1,0,0).transformDirection(new THREE.Matrix4().copy(group.matrixWorld).invert());T=[cr.x,cr.y,cr.z];}
@@ -1440,7 +1596,8 @@ function stroke(e,first){
 function endStroke(){
   soundStop();
   if(strokeDabs>0&&recIdx.length){pushHist({idx:Int32Array.from(recIdx),pos:Float32Array.from(recPos),mask:Float32Array.from(recMask),paint:Float32Array.from(recPaint),label:TOOLMAP[strokeTool].name});
-    recIdx=[];recPos=[];recMask=[];recPaint=[];if(!PAINT_IDS.has(strokeTool)&&strokeTool!=='mask')buildGrid();if(sculptState)sculptState.edited=true;scheduleSave();}
+    recIdx=[];recPos=[];recMask=[];recPaint=[];if(!PAINT_IDS.has(strokeTool)&&strokeTool!=='mask')buildGrid();
+    if((strokeTool==='stretch'||strokeTool==='grab')&&!window.__hintR){window.__hintR=1;setTimeout(()=>toast('Dica: aperte R para reamassar e redistribuir a malha esticada'),900);}if(sculptState)sculptState.edited=true;scheduleSave();}
   grab=null;mode=null;
 }
 
@@ -1494,7 +1651,7 @@ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goStage(b.datase
 /* =================== Interface =================== */
 const rail=$('rail');
 function buildRail(){
-  rail.innerHTML='';let lastGrp='';
+  rail.innerHTML='';let lastGrp='';rail.classList.toggle('wide',TOOLSETS[stage].length>10);
   TOOLSETS[stage].forEach(t=>{
     if(t.grp!==lastGrp){const g=document.createElement('div');g.className='grp';g.textContent=t.grp;rail.appendChild(g);lastGrp=t.grp;}
     const b=document.createElement('button');b.className='tool'+(t.cls?' '+t.cls:'');b.id='tool-'+t.id;b.setAttribute('aria-label',t.name);
@@ -1507,11 +1664,12 @@ function setStrength(v){settings.strength=v;if(curTool())toolPrefs[curTool()].st
 const HINTS={move:'Arraste juntas · Simetria espelha',extend:'Arraste a partir de uma junta',connect:'Toque em duas juntas',armErase:'Toque em junta ou arame',
   ball:'Toque ou arraste sobre a peça',coil:'Arraste para enrolar',slab:'Assenta sobre a superfície',cube:'Assenta sobre a superfície',cyl:'Fica em pé na superfície',cut:'Toque ou arraste na massa',
   mask:'Alt apaga a máscara',smooth:'Use Shift com qualquer ferramenta',grab:'Arraste a massa inteira',
+  stretch:'Arraste para puxar uma ponta',slip:'Passe sobre emendas e frestas',roll:'Arraste para abrir a argila',crease:'Arraste para vincar · Alt levanta',stamp:'Toque ou arraste · Alt afunda',wire:'Risque uma linha · Alt tira o lado maior',
   brush:'Alt raspa a pintura',wash:'Melhor com pincel grande',polish:'Revela a cor de baixo nos relevos',erase:'Volta à argila'};
 function setTool(id){
   if(!id)return;tools[stage]=id;const t=TOOLMAP[id];TOOLSETS[stage].forEach(x=>{const b=$('tool-'+x.id);if(b)b.setAttribute('aria-pressed',x.id===id);});
   if(stage!=='arm'){setSize(toolPrefs[id].size);if(stage==='sculpt'||stage==='paint')setStrength(toolPrefs[id].str);}
-  $('curName').textContent=t.name;$('curHint').textContent=HINTS[id]||'Shift alisa · Alt inverte';armSel=null;
+  $('curName').textContent=t.name;$('curHint').textContent=HINTS[id]||'Shift alisa · Alt inverte';armSel=null;$('stampGroup').hidden=!(stage==='sculpt'&&id==='stamp');
 }
 $('size').addEventListener('input',e=>setSize(+e.target.value));
 $('strength').addEventListener('input',e=>setStrength(e.target.value/100));
@@ -1527,6 +1685,12 @@ $('maskInv').onclick=()=>{pushHist(fullEntry('Inverter máscara'));for(let i=0;i
 $('maskClear').onclick=()=>{pushHist(fullEntry('Limpar máscara'));mask.fill(0);sculptDirty=true;scheduleSave();toast('Máscara limpa');};
 $('paintClear').onclick=()=>{pushHist(fullEntry('Limpar pintura'));for(let i=3;i<paint.length;i+=4)paint[i]=0;sculptDirty=true;scheduleSave();toast('Pintura limpa');};
 $('coverWire').onclick=coverWire;
+STAMPS.forEach(st=>{const b=document.createElement('button');b.className='chip';b.dataset.id=st.id;b.textContent=st.name;b.onclick=()=>{settings.stamp=st.id;[...$('stamps').children].forEach(x=>x.setAttribute('aria-pressed',x.dataset.id===st.id));};$('stamps').appendChild(b);});
+[...$('stamps').children].forEach(x=>x.setAttribute('aria-pressed',x.dataset.id===settings.stamp));
+REMESH_RES.forEach(q=>{const b=document.createElement('button');b.dataset.v=q.v;b.textContent=q.name;b.onclick=()=>{settings.remeshRes=q.v;[...$('remeshRes').children].forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===q.v));};$('remeshRes').appendChild(b);});
+[...$('remeshRes').children].forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===settings.remeshRes));
+$('remeshBtn').onclick=()=>doRemesh(null);
+$('tTilt').onclick=()=>setToggle('tTilt','tilt',!settings.tilt);
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
 $('settingsBtn').onclick=()=>{const o=$('side').classList.toggle('open');$('settingsBtn').setAttribute('aria-expanded',o);};
 let toastT=0;function toast(t){const m=$('toast');m.textContent=t;m.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>m.classList.remove('show'),1600);}
@@ -1536,8 +1700,9 @@ ARM_TEMPLATES.forEach(t=>{const b=document.createElement('button');b.className='
 const radial=$('radial');let radialOn=false,radialHot=null;
 function openRadial(){const list=TOOLSETS[stage];if(!list.length)return;radial.querySelectorAll('.it').forEach(b=>b.remove());
   list.forEach((t,i)=>{const a=-Math.PI/2+i/list.length*Math.PI*2,b=document.createElement('button');b.className='it';b.dataset.id=t.id;b.setAttribute('aria-label',t.name);
-    b.style.left=Math.cos(a)*92+'px';b.style.top=Math.sin(a)*92+'px';b.innerHTML=svg(t.icon);b.onpointerdown=ev=>{ev.preventDefault();setTool(t.id);toast(t.name);closeRadial();};radial.appendChild(b);});
-  radialOn=true;const x=clamp(mouseX,130,innerWidth-130),y=clamp(mouseY,130,innerHeight-130);radial.style.left=x+'px';radial.style.top=y+'px';radial.hidden=false;radial._c=[x,y];hotRadial(null);}
+    const RR=list.length>10?122:92;b.style.left=Math.cos(a)*RR+'px';b.style.top=Math.sin(a)*RR+'px';b.innerHTML=svg(t.icon);b.onpointerdown=ev=>{ev.preventDefault();setTool(t.id);toast(t.name);closeRadial();};radial.appendChild(b);});
+  const big=list.length>10,rg=radial.querySelector('.ring');rg.style.width=rg.style.height=(big?310:250)+'px';rg.style.left=rg.style.top=(big?-155:-125)+'px';
+  radialOn=true;const x=clamp(mouseX,160,innerWidth-160),y=clamp(mouseY,160,innerHeight-160);radial.style.left=x+'px';radial.style.top=y+'px';radial.hidden=false;radial._c=[x,y];hotRadial(null);}
 function hotRadial(id){radialHot=id;radial.querySelectorAll('.it').forEach(b=>b.classList.toggle('hot',b.dataset.id===id));const t=TOOLMAP[id||curTool()];$('radialLabel').textContent=t?t.name:'';}
 function closeRadial(){radialOn=false;radial.hidden=true;}
 window.addEventListener('pointermove',e=>{mouseX=e.clientX;mouseY=e.clientY;if(!radialOn)return;const[cx,cy]=radial._c,dx=e.clientX-cx,dy=e.clientY-cy;
@@ -1545,7 +1710,7 @@ window.addEventListener('pointermove',e=>{mouseX=e.clientX;mouseY=e.clientY;if(!
 
 /* teclado */
 const KEYS=[['Geral',null],['Próxima etapa','Tab'],['Ferramentas da etapa','1 a 0'],['Menu radial','Espaço'],['Simetria X','X'],['Enquadrar','F'],['Desfazer','Ctrl + Z'],['Refazer','Ctrl + Shift + Z'],['Salvar agora','Ctrl + S'],['Esta lista','?'],
- ['Escultura',null],['Alisar temporário','Shift'],['Inverter o pincel','Alt'],['Pintar máscara','Ctrl + arrastar'],['Diminuir / aumentar pincel','[ + ]'],
+ ['Escultura',null],['Reamassar a malha','R'],['Estica · Barbotina · Rolo','E · B · O'],['Vinco · Carimbo · Fio de corte','V · T · C'],['Alisar temporário','Shift'],['Inverter o pincel','Alt'],['Pintar máscara','Ctrl + arrastar'],['Diminuir / aumentar pincel','[ + ]'],
  ['Pintura',null],['Raspar a pintura','Alt + arrastar'],
  ['Navegação',null],['Girar a banqueta','Arrastar fora da peça'],['Mover uma luz (Render)','Arrastar o ponto de luz'],['Aproximar','Roda do mouse'],['Celular: girar e aproximar','Dois dedos']];
 $('keysList').innerHTML=KEYS.map(([a,b])=>b?`<div><span>${a}</span><span>${b.split(' + ').map(x=>`<span class="kbd">${x}</span>`).join(' ')}</span></div>`:`<h4>${a}</h4>`).join('');
@@ -1560,7 +1725,8 @@ window.addEventListener('keydown',e=>{
     else if(k==='s'){e.preventDefault();saveNow().then(ok=>toast(ok?'Peça salva':'Não foi possível salvar'));}return;}
   if(e.key==='Tab'){e.preventDefault();goStage(ORDER[(ORDER.indexOf(stage)+(e.shiftKey?ORDER.length-1:1))%ORDER.length]);return;}
   if(e.key===' '){e.preventDefault();if(!e.repeat&&!mode)openRadial();return;}
-  const t=TOOLSETS[stage].find(x=>x.key===e.key);if(t){setTool(t.id);toast(t.name);return;}
+  if(k==='r'&&stage==='sculpt'){doRemesh(null);return;}
+  const t=TOOLSETS[stage].find(x=>x.key===e.key||x.key===k);if(t){setTool(t.id);toast(t.name);return;}
   if(k==='m'&&stage==='sculpt'){setTool('mask');toast('Máscara');}
   if(e.key==='[')setSize(settings.size/1.15);if(e.key===']')setSize(settings.size*1.15);
   if(k==='x'){setToggle('tSym','sym',!settings.sym);toast(settings.sym?'Simetria ligada':'Simetria desligada');}

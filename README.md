@@ -8,7 +8,7 @@ Plataformas: Windows (instalável, com atualização automática) e navegador. i
 
 1. **Armação** *(opcional)*: arame de Figura humana, Animal, Busto ou Livre, preso numa haste. Mover, Estender, Conectar, Apagar.
 2. **Massa**: Pelota, Rolinho, Placa, Bloco, Cilindro e Arrancar. As peças se fundem com emendas visíveis. Pode começar sem arame.
-3. **Escultura**: 10 pincéis (Argila, Polegar, Puxar, Inflar, Alisar, Espátula, Esteca dentada, Laço, Beliscar, Máscara), com conservação de volume e argila úmida/couro/seca.
+3. **Escultura**: 16 pincéis em 5 grupos. Modelar (Argila, Polegar, Puxar, Inflar, Estica), Acabar (Alisar, Espátula, Barbotina, Rolo), Detalhar (Esteca dentada, Laço, Beliscar, Vinco, Carimbo de dedo/tecido/couro/esponja), Cortar (Fio de corte), Proteger (Máscara). Conservação de volume, argila úmida/couro/seca, **inclinação da caneta** (deitada abre a marca e afunda menos) e **Reamassar** (refaz a malha por igual, levando pintura e máscara).
 4. **Pintura**: engobes e óxidos, Lavagem que escorre para as cavidades, Polir que revela os relevos. Acabamentos: Argila crua, Terracota, Gesso, Bronze patinado, Mármore.
 5. **Render**: até 4 luzes posicionadas na cena, sombra suave, fundos de estúdio, lente, formatos (4:5, 1:1, 16:9) e exportação até 4K. Vídeo de giro 360°.
 
@@ -44,4 +44,4 @@ O instalador ainda não é assinado digitalmente, então o Windows pode mostrar 
 
 ## Roadmap
 
-Ver [docs/ANALISE.md](docs/ANALISE.md). Próximos passos: Reamassar (remesh por voxel), alisamento que preserva volume, inclinação da caneta, carimbos de textura, pincéis Barbotina, Fio de corte e Estica.
+Ver [docs/ANALISE.md](docs/ANALISE.md). Próximos passos: alisamento que preserva volume, topologia dinâmica local, reorganizar barra superior e painel.
