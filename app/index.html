@@ -1755,7 +1755,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function setSaveState(kind,text){const el=$('saveState');el.className='save-state'+(kind?' '+kind:'');el.querySelector('span').textContent=text;el.title=text;}
-function drawFrame(){if(stage!=='sculpt'&&stage!=='paint'&&stage!=='render')rebuildChunks();updateCamera();if(stage==='render'){placeGizmos();renderShadow();}renderer.render(scene,camera);}
+function drawFrame(){if(stage!=='sculpt'&&stage!=='paint'&&stage!=='render')rebuildChunks();updateCamera();if(stage==='render'){placeGizmos();renderShadow();}else SHU.uShadowOn.value=0;renderer.render(scene,camera);}
 function captureThumb(size){
   const was=cursor.visible,gv=gizmoGroup.visible;cursor.visible=false;gizmoGroup.visible=false;drawFrame();
   const src=renderer.domElement,c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
