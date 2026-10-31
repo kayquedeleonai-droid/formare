@@ -4,15 +4,15 @@ Escultura digital com **sensação de argila real**. Inspirado no ZBrush, Nomad 
 
 Plataformas: Windows (instalável, com atualização automática) e navegador. iPad e Android depois.
 
-## O processo, como no ateliê
+## O processo
 
-1. **Armação** *(opcional)*: arame de Figura humana, Animal, Busto ou Livre, preso numa haste. Mover, Estender, Conectar, Apagar.
-2. **Massa**: Pelota, Rolinho, Placa, Bloco, Cilindro e Arrancar. As peças se fundem com emendas visíveis. Pode começar sem arame.
-3. **Escultura**: 16 pincéis em 5 grupos. Modelar (Argila, Polegar, Puxar, Inflar, Estica), Acabar (Alisar, Espátula, Barbotina, Rolo), Detalhar (Esteca dentada, Laço, Beliscar, Vinco, Carimbo de dedo/tecido/couro/esponja), Cortar (Fio de corte), Proteger (Máscara). Conservação de volume, argila úmida/couro/seca, **inclinação da caneta** (deitada abre a marca e afunda menos) e **Reamassar** (refaz a malha por igual, levando pintura e máscara).
-4. **Pintura**: engobes e óxidos, Lavagem que escorre para as cavidades, Polir que revela os relevos. Acabamentos: Argila crua, Terracota, Gesso, Bronze patinado, Mármore.
-5. **Render**: até 4 luzes posicionadas na cena, sombra suave, fundos de estúdio, lente, formatos (4:5, 1:1, 16:9) e exportação até 4K. Vídeo de giro 360°.
+1. **Escultura**: 16 pincéis em 5 grupos. Modelar (Argila, Polegar, Puxar, Inflar, Estica), Acabar (Alisar, Espátula, Barbotina, Rolo), Detalhar (Esteca dentada, Laço, Beliscar, Vinco, Carimbo de dedo/tecido/couro/esponja), Cortar (Fio de corte), Proteger (Máscara). Conservação de volume, argila úmida/couro/seca, **inclinação da caneta** e **Reamassar** (refaz a malha por igual, levando pintura e máscara).
+2. **Pintura**: engobes e óxidos, Lavagem que escorre para as cavidades, Polir que revela os relevos. Acabamentos: Argila crua, Terracota, Gesso, Bronze patinado, Mármore.
+3. **Render**: até 4 luzes posicionadas na cena, sombra suave, fundos de estúdio, lente, formatos (4:5, 1:1, 16:9) e exportação até 4K. Vídeo de giro 360°.
 
-Peça nova começa direto numa bola de argila; a armação é um recurso a mais.
+Peça nova começa numa Bola de argila, Cabeça base ou Bloco. Sombreamento com **oclusão de ambiente em tempo real (SSAO)**, calculada por pixel a cada quadro.
+
+As etapas de Armação de arame e Massa estão desativadas por enquanto; o código continua no app para voltar no futuro.
 
 Salvamento automático a cada gesto. Exporta projeto (.zip), OBJ com cores, STL em milímetros, PNG e vídeo.
 

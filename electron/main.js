@@ -14,7 +14,7 @@ function createWindow() {
     height: 900,
     minWidth: 960,
     minHeight: 640,
-    backgroundColor: '#1a1714',
+    backgroundColor: '#1d1d1f',
     title: 'Formare',
     icon: path.join(__dirname, '..', 'build', 'icon.png'),
     autoHideMenuBar: true,

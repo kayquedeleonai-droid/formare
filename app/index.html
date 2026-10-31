@@ -5,16 +5,16 @@
 <style>
 /* Layout: full-bleed workshop stage; floating islands at the edges like tools on a sculptor's bench. */
 :root{
-  --bg:#1a1714;
-  --bg-deep:#110f0d;
-  --panel:rgba(36,32,28,.88);
-  --panel-solid:#26221e;
-  --raise:rgba(236,226,210,.06);
-  --line:rgba(236,226,210,.10);
-  --fg:#ede5d8;
-  --muted:#a1968a;
+  --bg:#1d1d1f;
+  --bg-deep:#121213;
+  --panel:rgba(40,40,43,.9);
+  --panel-solid:#2a2a2d;
+  --raise:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --fg:#e9e9ea;
+  --muted:#9b9ba0;
   --accent:#d39a62;
-  --accent-ink:#1a1714;
+  --accent-ink:#1d1d1f;
   --wire:#b9c2c9;
   --mask:#7d9cc4;
   --danger:#e07a63;
@@ -25,7 +25,7 @@
 }
 [hidden]{display:none!important}
 html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--f-ui)}
-#stage{position:fixed;inset:0;background:radial-gradient(120% 90% at 50% 30%, #2b2620 0%, var(--bg) 55%, var(--bg-deep) 100%)}
+#stage{position:fixed;inset:0;background:radial-gradient(120% 90% at 50% 30%, #333336 0%, var(--bg) 55%, var(--bg-deep) 100%)}
 #stage canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
 .panel{background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:14px}
 button{font:inherit;color:inherit}
@@ -52,7 +52,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .stg small{font-weight:500;font-size:10px;opacity:.75}
 .stg:hover{color:var(--fg);background:var(--raise)}
 .stg[aria-current="step"]{color:var(--accent-ink);background:var(--accent)}
-.stg[aria-current="step"] i{border-color:rgba(26,23,20,.35)}
+.stg[aria-current="step"] i{border-color:rgba(28,28,30,.35)}
 .chev{width:12px;height:12px;color:var(--muted);opacity:.5;flex:none}
 .coach{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);text-align:center;width:min(520px,calc(100% - 640px));pointer-events:none;line-height:1.5}
 
@@ -100,14 +100,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .field output{font-family:var(--f-num);letter-spacing:0;color:var(--fg);font-variant-numeric:tabular-nums}
 .counts{flex:1;font-family:var(--f-num);font-size:12px;color:var(--muted);text-align:right}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;margin:0}
-input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) var(--p,50%),rgba(236,226,210,.16) var(--p,50%))}
-input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(236,226,210,.16)}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) var(--p,50%),rgba(255,255,255,.16) var(--p,50%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.16)}
 input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--fg);margin-top:-6px;border:0;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--fg);border:0}
 .pressure{width:40px;display:flex;flex-direction:column;gap:5px;align-items:center;flex:none}
 .pressure small{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.pmeter{width:8px;height:26px;border-radius:4px;background:rgba(236,226,210,.12);position:relative;overflow:hidden}
+.pmeter{width:8px;height:26px;border-radius:4px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}
 .pmeter i{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--accent);transition:height .06s}
 .seg{display:flex;gap:2px;background:rgba(0,0,0,.18);border-radius:8px;padding:2px}
 .seg button{border:0;background:transparent;border-radius:6px;padding:4px 7px;font-size:11px;font-family:var(--f-num);color:var(--muted);cursor:pointer;white-space:nowrap}
@@ -135,14 +135,14 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .chip[aria-pressed="true"]{border-color:var(--accent);background:rgba(211,154,98,.12)}
 .toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;background:none;border:0;padding:2px 0;cursor:pointer;text-align:left}
 .toggle small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
-.switch{flex:none;width:34px;height:20px;border-radius:10px;background:rgba(236,226,210,.16);position:relative;transition:background .15s}
+.switch{flex:none;width:34px;height:20px;border-radius:10px;background:rgba(255,255,255,.16);position:relative;transition:background .15s}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--fg);transition:transform .15s}
 .toggle[aria-checked="true"] .switch{background:var(--accent)}
 .toggle[aria-checked="true"] .switch::after{transform:translateX(14px);background:var(--accent-ink)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.btn{border:1px solid var(--line);background:rgba(236,226,210,.04);border-radius:8px;padding:8px 6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
-.btn:hover{background:rgba(236,226,210,.09)}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:8px;padding:8px 6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.09)}
 .btn:disabled{opacity:.4;cursor:default}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700;padding:10px 10px;font-size:13px}
 .btn.primary:hover{filter:brightness(1.07);background:var(--accent)}
@@ -163,18 +163,18 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .stats{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));font-family:var(--f-num);font-size:11px;color:var(--muted);line-height:1.7;pointer-events:none}
 .toast{position:fixed;left:50%;top:calc(96px + env(safe-area-inset-top,0px));transform:translateX(-50%);font-size:12px;padding:6px 12px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .2s;z-index:60;white-space:nowrap}
 .toast.show{opacity:1}
-.frame-guide{position:fixed;pointer-events:none;box-shadow:0 0 0 9999px rgba(8,7,6,.5);border:1px solid rgba(236,226,210,.35);z-index:1}
+.frame-guide{position:fixed;pointer-events:none;box-shadow:0 0 0 9999px rgba(8,8,9,.5);border:1px solid rgba(255,255,255,.35);z-index:1}
 
 /* ---------- menu radial ---------- */
 .radial{position:fixed;width:0;height:0;z-index:30;pointer-events:none}
-.radial .ring{position:absolute;left:-125px;top:-125px;width:250px;height:250px;border-radius:50%;background:rgba(26,23,20,.6);border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.radial .ring{position:absolute;left:-125px;top:-125px;width:250px;height:250px;border-radius:50%;background:rgba(28,28,30,.6);border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .radial .it{position:absolute;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;display:grid;place-items:center;background:var(--panel-solid);border:1px solid var(--line);color:var(--fg);pointer-events:auto;cursor:pointer;transition:transform .1s,background .1s}
 .radial .it svg{width:23px;height:23px}
 .radial .it.hot{background:var(--accent);color:var(--accent-ink);transform:scale(1.12)}
 .radial .label{position:absolute;left:-80px;width:160px;top:-9px;text-align:center;font-size:12px;font-weight:600}
 
 /* ---------- modais ---------- */
-.scrim{position:fixed;inset:0;background:rgba(10,9,8,.6);display:grid;place-items:center;z-index:50;padding:16px;box-sizing:border-box}
+.scrim{position:fixed;inset:0;background:rgba(10,10,11,.6);display:grid;place-items:center;z-index:50;padding:16px;box-sizing:border-box}
 .modal{width:min(880px,100%);max-height:calc(100% - 32px);overflow:auto;padding:22px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;background:var(--panel-solid)}
 .modal header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .modal h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:24px}
@@ -189,7 +189,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
 .card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
 .card.current{border-color:var(--accent)}
-.card .thumb{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#2b2620,#14110f);border:0;padding:0;cursor:pointer;display:block;width:100%}
+.card .thumb{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#333336,#141415);border:0;padding:0;cursor:pointer;display:block;width:100%}
 .card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .card .meta{padding:9px 10px 6px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .card .meta b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -204,7 +204,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .confirm p{margin:0;font-size:14px;line-height:1.55}
 .confirm .acts{display:flex;justify-content:flex-end;gap:8px}
 .confirm .acts .btn{padding:9px 14px}
-.busy{position:fixed;inset:0;background:rgba(10,9,8,.55);display:grid;place-items:center;z-index:70}
+.busy{position:fixed;inset:0;background:rgba(10,10,11,.55);display:grid;place-items:center;z-index:70}
 .busy.light{background:transparent;place-items:start center;padding-top:110px;pointer-events:none}
 .busy div{padding:14px 18px;font-size:13px;display:flex;align-items:center;gap:10px}
 .busy i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
@@ -261,15 +261,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 </div>
 
 <nav class="stages panel" aria-label="Etapas">
-  <button class="stg opt" data-stage="arm" title="Armação de arame (opcional)"><i>1</i><span>Armação <small>opcional</small></span></button>
+  <button class="stg" data-stage="sculpt"><i>1</i><span>Escultura</span></button>
   <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
-  <button class="stg" data-stage="mass"><i>2</i><span>Massa</span></button>
+  <button class="stg" data-stage="paint"><i>2</i><span>Pintura</span></button>
   <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
-  <button class="stg" data-stage="sculpt"><i>3</i><span>Escultura</span></button>
-  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
-  <button class="stg" data-stage="paint"><i>4</i><span>Pintura</span></button>
-  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
-  <button class="stg" data-stage="render"><i>5</i><span>Render</span></button>
+  <button class="stg" data-stage="render"><i>3</i><span>Render</span></button>
 </nav>
 <div class="coach" id="coach"></div>
 
@@ -414,9 +410,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   </div>
   <div class="group" data-for="arm mass sculpt paint render">
     <button class="toggle" id="tSym" role="switch" aria-checked="true" data-for="arm mass sculpt paint"><span>Simetria X<small>Espelha o gesto no outro lado</small></span><span class="switch"></span></button>
+    <button class="toggle" id="tAO" role="switch" aria-checked="true" data-for="sculpt paint render"><span>Sombra de contato<small>Oclusão de ambiente calculada a cada quadro</small></span><span class="switch"></span></button>
     <button class="toggle" id="tTilt" role="switch" aria-checked="true" data-for="sculpt"><span>Inclinação da caneta<small>Caneta deitada abre a marca e afunda menos</small></span><span class="switch"></span></button>
     <button class="toggle" id="tVol" role="switch" aria-checked="true" data-for="sculpt"><span>Conservar volume<small>Material empurrado sobe nas bordas</small></span><span class="switch"></span></button>
-    <button class="toggle" id="tWire" role="switch" aria-checked="true" data-for="sculpt paint render"><span>Mostrar arame<small>Onde a argila não cobriu</small></span><span class="switch"></span></button>
+    <button class="toggle" id="tWire" role="switch" aria-checked="true" data-for="none"><span>Mostrar arame<small>Onde a argila não cobriu</small></span><span class="switch"></span></button>
     <button class="toggle" id="tSound" role="switch" aria-checked="true" data-for="arm mass sculpt paint"><span>Som da argila<small>Atrito e pelotas reagem ao gesto</small></span><span class="switch"></span></button>
   </div>
   <div class="group" data-for="arm mass sculpt paint render">
@@ -430,7 +427,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   </div>
   <div class="group" data-for="arm"><button class="btn primary" data-go="mass">Avançar para a massa →</button></div>
   <div class="group" data-for="mass"><button class="btn primary" data-go="sculpt">Começar a esculpir →</button></div>
-  <div class="group" data-for="sculpt"><button class="btn primary" data-go="paint">Pintar a peça →</button></div>
+  <div class="group" data-for="sculpt"><button class="btn primary" data-go="paint" style="display:flex">Pintar a peça →</button></div>
   <div class="group" data-for="paint"><button class="btn primary" data-go="render">Ir para o render →</button></div>
 </aside>
 
@@ -442,10 +439,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <div class="scrim" id="libScrim" hidden>
   <div class="modal panel" role="dialog" aria-modal="true" aria-labelledby="libTitle">
     <header><h3 id="libTitle">Peças</h3><button class="btn" id="libClose">Fechar</button></header>
-    <h4>Começar na argila</h4>
+    <h4>Começar uma peça nova</h4>
     <div class="prims" id="primsClay"></div>
-    <h4>Começar com armação de arame</h4>
-    <div class="prims" id="primsArm"></div>
     <h4>Suas peças</h4>
     <div class="pieces" id="pieces"></div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -481,7 +476,7 @@ const $=id=>document.getElementById(id);
 const svg=(p,sw)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||1.6}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 
 /* =================== Etapas e ferramentas =================== */
-const ORDER=['arm','mass','sculpt','paint','render'];
+const ORDER=['sculpt','paint','render'];
 const COACH={
   arm:'Opcional: arraste as juntas para posar. Com Estender, puxe arame novo a partir de uma junta.',
   mass:'Toque na massa ou no arame para grudar argila. Sem nada na cena, a primeira peça aparece onde você tocar.',
@@ -779,7 +774,7 @@ function raycastMesh(o,d){
 /* =================== Pincéis =================== */
 const falloff=t=>{if(t>=1)return 0;const a=1-t*t;return a*a;};
 const falloffHard=t=>{if(t>=1)return 0;if(t<.5)return 1;const u=(t-.5)/.5,a=1-u*u;return a*a;};
-const settings={tilt:true,stamp:'finger',remeshRes:160,size:70,strength:.55,stab:.3,irr:.55,dry:.18,sym:true,vol:true,sound:true,wire:true,clay:0,light:'atelie',finish:'clay',paintColor:PAINTS[2].hex,
+const settings={ao:true,tilt:true,stamp:'finger',remeshRes:160,size:70,strength:.55,stab:.3,irr:.55,dry:.18,sym:true,vol:true,sound:true,wire:true,clay:0,light:'atelie',finish:'clay',paintColor:PAINTS[2].hex,
   render:{lights:RENDER_PRESETS[0].lights.map(l=>({...l,on:true})),sel:0,bg:'grafite',base:true,vig:true,lens:50,ev:0,format:'tela',quality:2400}};
 let strokeSeed=[0,0,0];
 let strokeId=1,recIdx=[],recPos=[],recMask=[],recPaint=[];
@@ -998,6 +993,10 @@ float shadowAt(vec3 wp,float ndl){
     float d=unpackRGBAToDepth(texture2D(uShadowMap,p.xy+o));s+=(p.z-bias>d)?0.0:1.0;}
   return s/16.0;}`;
 
+const AOU={tAO:{value:null},uAOOn:{value:0},uRes:{value:new THREE.Vector2(1,1)}};
+const AO_GLSL=`
+uniform sampler2D tAO;uniform float uAOOn;uniform vec2 uRes;
+float aoAt(){return uAOOn>0.5?texture2D(tAO,gl_FragCoord.xy/uRes).r:1.0;}`;
 const NOISE=`vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
 vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
 float snoise(vec3 v){const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
@@ -1011,13 +1010,14 @@ vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=n
 vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}`;
 const clayMat=new THREE.ShaderMaterial({
   uniforms:Object.assign({uColor:{value:V3()},uDry:{value:settings.dry},uModelRot:{value:new THREE.Matrix3()},
-    uL:{value:[V3(),V3(),V3(),V3()]},uC:{value:[V3(),V3(),V3(),V3()]},uLn:{value:3},uLo:{value:V3()},uHi:{value:V3()},uExp:{value:1},uFinish:{value:0},uPaintOn:{value:0}},SHU),
+    uL:{value:[V3(),V3(),V3(),V3()]},uC:{value:[V3(),V3(),V3(),V3()]},uLn:{value:3},uLo:{value:V3()},uHi:{value:V3()},uExp:{value:1},uFinish:{value:0},uPaintOn:{value:0}},SHU,AOU),
   extensions:{derivatives:true},
   vertexShader:`attribute float cavity;attribute float mask;attribute vec4 paint;varying vec3 vObjPos;varying vec3 vObjNormal;varying vec3 vWorldPos;varying float vCav;varying float vMask;varying vec4 vPaint;
     void main(){vObjPos=position;vObjNormal=normal;vCav=cavity;vMask=mask;vPaint=paint;vec4 wp=modelMatrix*vec4(position,1.0);vWorldPos=wp.xyz;gl_Position=projectionMatrix*viewMatrix*wp;}`,
   fragmentShader:`uniform vec3 uColor;uniform float uDry;uniform mat3 uModelRot;uniform vec3 uL[4];uniform vec3 uC[4];uniform int uLn;uniform vec3 uLo;uniform vec3 uHi;uniform float uExp;uniform float uFinish;uniform float uPaintOn;
     varying vec3 vObjPos;varying vec3 vObjNormal;varying vec3 vWorldPos;varying float vCav;varying float vMask;varying vec4 vPaint;
     ${SHADOW_GLSL}
+    ${AO_GLSL}
     ${NOISE}
     vec3 grainGrad(vec3 p,vec3 n,float freq){vec3 q=p*freq;float e=0.07;float n0=snoise(q);
       vec3 g=vec3(snoise(q+vec3(e,0.,0.))-n0,snoise(q+vec3(0.,e,0.))-n0,snoise(q+vec3(0.,0.,e))-n0)/e;return g-n*dot(g,n);}
@@ -1037,18 +1037,18 @@ const clayMat=new THREE.ShaderMaterial({
       n=normalize(n-g);vec3 N=normalize(uModelRot*n);vec3 V=normalize(cameraPosition-vWorldPos);
       if(dot(N,V)<-0.2)N=-N;
       float cv=clamp(vCav,-1.2,1.4);float speck=snoise(vObjPos*48.)*0.5+0.5;
-      vec3 alb;float rough;float metal=0.;float specK;float wrap=0.5;float cavDark=0.62;float edgeLight=0.22;
+      vec3 alb;float rough;float metal=0.;float specK;float wrap=0.5;float cavDark=0.16;float edgeLight=0.14;
       if(isClay>0.5){vec3 base=uColor*mix(1.0,0.86+0.28*speck,0.35+0.65*dry);vec3 gray=vec3(dot(base,vec3(0.3,0.5,0.2)));
         vec3 dryCol=mix(base,gray,0.3)*1.35+0.015;alb=mix(base*0.78,dryCol,dry);rough=mix(0.3,0.88,dry);specK=mix(1.8,0.25,dry);}
-      else if(isTerra>0.5){alb=vec3(0.50,0.19,0.09)*(0.86+0.3*speck);alb=mix(alb,alb*0.5,smoothstep(0.78,0.95,snoise(vObjPos*34.)*0.5+0.5)*0.7);rough=0.78;specK=0.35;cavDark=0.5;}
-      else if(isGesso>0.5){alb=vec3(0.80,0.78,0.73)*(0.96+0.06*speck);rough=0.95;specK=0.12;wrap=0.85;cavDark=0.42;edgeLight=0.1;}
+      else if(isTerra>0.5){alb=vec3(0.50,0.19,0.09)*(0.86+0.3*speck);alb=mix(alb,alb*0.5,smoothstep(0.78,0.95,snoise(vObjPos*34.)*0.5+0.5)*0.7);rough=0.78;specK=0.35;cavDark=0.14;}
+      else if(isGesso>0.5){alb=vec3(0.80,0.78,0.73)*(0.96+0.06*speck);rough=0.95;specK=0.12;wrap=0.85;cavDark=0.1;edgeLight=0.06;}
       else if(isBronze>0.5){alb=vec3(0.56,0.34,0.15);metal=1.;rough=0.3;specK=1.;cavDark=0.;edgeLight=0.;
         float pat=clamp(smoothstep(-0.05,0.55,cv)+0.3*(snoise(vObjPos*9.)*0.5+0.5)*smoothstep(-0.35,0.25,cv),0.,1.);
         vec3 verd=mix(vec3(0.07,0.05,0.035),vec3(0.17,0.33,0.27),0.5+0.5*snoise(vObjPos*5.));
         alb=mix(alb,verd,pat);metal=1.-pat;rough=mix(0.3,0.8,pat);rough=mix(rough,0.16,smoothstep(0.,-0.6,cv)*(1.-pat));}
       else{float v=snoise(vObjPos*vec3(1.6,3.2,1.6)+snoise(vObjPos*2.2)*1.6);float vein=1.-smoothstep(0.0,0.07,abs(v));
         float vein2=1.-smoothstep(0.0,0.03,abs(snoise(vObjPos*5.+3.)));
-        alb=mix(vec3(0.86,0.85,0.82),vec3(0.38,0.39,0.41),vein*0.7+vein2*0.25)*(0.97+0.05*speck);rough=0.26;specK=0.9;wrap=0.75;cavDark=0.35;edgeLight=0.08;}
+        alb=mix(vec3(0.86,0.85,0.82),vec3(0.38,0.39,0.41),vein*0.7+vein2*0.25)*(0.97+0.05*speck);rough=0.26;specK=0.9;wrap=0.75;cavDark=0.08;edgeLight=0.05;}
       if(uPaintOn>0.5){float a=clamp(vPaint.a,0.,1.);alb=mix(alb,vPaint.rgb,a);metal*=1.-a;rough=mix(rough,max(rough,0.62),a*(1.-isClay));}
       alb*=1.0-max(cv,0.)*cavDark;alb*=1.0+max(-cv,0.)*edgeLight;
       alb=mix(alb,alb*vec3(0.32,0.42,0.6)+vec3(0.01,0.02,0.04),clamp(vMask,0.,1.)*0.85);
@@ -1056,10 +1056,11 @@ const clayMat=new THREE.ShaderMaterial({
       float sh=shadowAt(vWorldPos,dot(N,normalize(uL[0])));
       vec3 col=vec3(0.);
       for(int i=0;i<4;i++){if(i>=uLn)break;float s=i==0?sh:1.;col+=s*lightC(N,V,normalize(uL[i]),uC[i],dif,rough,F0,i==1?specK*0.5:specK,i==2?wrap+0.3:wrap);}
-      vec3 hemi=mix(uLo,uHi,N.y*0.5+0.5);col+=dif*hemi*(1.0-max(cv,0.)*0.85);
+      float ao=aoAt();col*=mix(1.0,ao,0.5);
+      vec3 hemi=mix(uLo,uHi,N.y*0.5+0.5);col+=dif*hemi*ao;
       vec3 R=reflect(-V,N);vec3 env=mix(uLo,uHi*1.8,smoothstep(-0.2,0.85,R.y));float Fr=pow(1.-max(dot(N,V),0.),5.);
-      col+=env*mix(F0,vec3(1.),Fr)*(metal*1.2+(1.-rough)*0.2)*(1.-max(cv,0.)*0.7);
-      col+=Fr*isClay*mix(0.22,0.03,dry)*vec3(0.85,0.88,0.95);
+      col+=env*mix(F0,vec3(1.),Fr)*(metal*1.2+(1.-rough)*0.2)*ao;
+      col+=Fr*isClay*mix(0.22,0.03,dry)*vec3(0.85,0.88,0.95)*ao;
       col=aces(col*uExp);gl_FragColor=vec4(pow(col,vec3(1./2.2)),1.);}`
 });
 
@@ -1069,14 +1070,65 @@ function woodTexture(){const c=document.createElement('canvas');c.width=c.height
   const g=x.createRadialGradient(256,256,40,256,256,256);g.addColorStop(0,'rgba(0,0,0,.4)');g.addColorStop(.45,'rgba(0,0,0,.1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,512,512);
   return new THREE.CanvasTexture(c);}
 const discY=-1.8,discR=1.7;
-const discMat=new THREE.ShaderMaterial({uniforms:Object.assign({map:{value:woodTexture()},uRender:{value:0},uAmb:{value:.5}},SHU),
+const discMat=new THREE.ShaderMaterial({uniforms:Object.assign({map:{value:woodTexture()},uRender:{value:0},uAmb:{value:.5}},SHU,AOU),
   vertexShader:`varying vec2 vUv;varying vec3 vWorldPos;void main(){vUv=uv;vec4 wp=modelMatrix*vec4(position,1.0);vWorldPos=wp.xyz;gl_Position=projectionMatrix*viewMatrix*wp;}`,
-  fragmentShader:`uniform sampler2D map;uniform float uRender;uniform float uAmb;varying vec2 vUv;varying vec3 vWorldPos;${SHADOW_GLSL}
-    void main(){vec3 t=pow(texture2D(map,vUv).rgb,vec3(2.2))*vec3(0.54,0.42,0.30);
+  fragmentShader:`uniform sampler2D map;uniform float uRender;uniform float uAmb;varying vec2 vUv;varying vec3 vWorldPos;${SHADOW_GLSL}${AO_GLSL}
+    void main(){vec3 t=pow(texture2D(map,vUv).rgb,vec3(2.2))*vec3(0.54,0.42,0.30)*mix(1.0,aoAt(),0.85);
       if(uRender>0.5){float s=shadowAt(vWorldPos,uKeyDir.y);vec3 l=uKeyCol*max(uKeyDir.y,0.)*s*0.75+vec3(0.42+uAmb);t*=l*1.25;}
       gl_FragColor=vec4(t,1.0);}`});
 const disc=new THREE.Mesh(new THREE.CircleGeometry(discR,96),discMat);disc.rotation.x=-Math.PI/2;disc.position.y=discY;group.add(disc);
 const rimM=new THREE.Mesh(new THREE.CylinderGeometry(discR,discR-.03,.09,96,1,true),new THREE.MeshBasicMaterial({color:0x2a1e15,side:THREE.DoubleSide}));rimM.position.y=discY-.045;group.add(rimM);
+
+/* oclusão de ambiente em tela (SSAO), meia resolução */
+const aoNormalMat=new THREE.MeshNormalMaterial({side:THREE.DoubleSide});
+let ndRT=null,aoRT=null,blurRT=null;
+function makeAORTs(w,h){[ndRT,aoRT,blurRT].forEach(r=>r&&r.dispose());
+  ndRT=new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.NearestFilter,magFilter:THREE.NearestFilter});ndRT.depthTexture=new THREE.DepthTexture(w,h);ndRT.depthTexture.type=THREE.UnsignedIntType;
+  aoRT=new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});blurRT=new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});}
+const quadCam=new THREE.OrthographicCamera(-1,1,1,-1,0,1),quadScene=new THREE.Scene(),quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2));quad.frustumCulled=false;quadScene.add(quad);
+const QUAD_VS=`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`;
+const aoMat=new THREE.ShaderMaterial({depthTest:false,depthWrite:false,uniforms:{tDepth:{value:null},tNormal:{value:null},uProj:{value:new THREE.Matrix4()},uInvProj:{value:new THREE.Matrix4()},uRadius:{value:.16},uStrength:{value:1.6}},
+  vertexShader:QUAD_VS,fragmentShader:`uniform sampler2D tDepth;uniform sampler2D tNormal;uniform mat4 uProj;uniform mat4 uInvProj;uniform float uRadius;uniform float uStrength;varying vec2 vUv;
+  vec3 viewPos(vec2 uv){float d=texture2D(tDepth,uv).x;vec4 v=uInvProj*vec4(uv*2.-1.,d*2.-1.,1.);return v.xyz/v.w;}
+  float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+  void main(){
+    float d=texture2D(tDepth,vUv).x;if(d>=0.99999){gl_FragColor=vec4(1.);return;}
+    vec3 P=viewPos(vUv);vec3 N=normalize(texture2D(tNormal,vUv).xyz*2.-1.);
+    float a=hash(gl_FragCoord.xy)*6.2831853;vec3 rnd=vec3(cos(a),sin(a),0.);
+    vec3 T=normalize(rnd-N*dot(rnd,N));vec3 B=cross(N,T);mat3 TBN=mat3(T,B,N);
+    float occ=0.;
+    for(int i=0;i<16;i++){float fi=float(i);
+      vec3 k=normalize(vec3(hash(vec2(fi,1.7))*2.-1.,hash(vec2(fi,9.1))*2.-1.,hash(vec2(fi,4.3))*.85+.15));
+      float sc=(fi+1.)/16.;sc=mix(.12,1.,sc*sc);k*=sc;
+      vec3 S=P+TBN*k*uRadius;vec4 o=uProj*vec4(S,1.);vec2 suv=o.xy/o.w*.5+.5;
+      if(suv.x<0.||suv.y<0.||suv.x>1.||suv.y>1.)continue;
+      float sz=viewPos(suv).z;float range=smoothstep(0.,1.,uRadius/max(abs(P.z-sz),1e-4));
+      occ+=(sz>=S.z+.02*uRadius?1.:0.)*range;}
+    float ao=clamp(1.-occ/16.*uStrength,0.,1.);gl_FragColor=vec4(vec3(ao),1.);}`});
+const blurMat=new THREE.ShaderMaterial({depthTest:false,depthWrite:false,uniforms:{tAOin:{value:null},tDepth:{value:null},uTexel:{value:new THREE.Vector2()},uInvProj:{value:new THREE.Matrix4()},uRadius:{value:.16}},
+  vertexShader:QUAD_VS,fragmentShader:`uniform sampler2D tAOin;uniform sampler2D tDepth;uniform vec2 uTexel;uniform mat4 uInvProj;uniform float uRadius;varying vec2 vUv;
+  float vz(vec2 uv){float d=texture2D(tDepth,uv).x;vec4 v=uInvProj*vec4(uv*2.-1.,d*2.-1.,1.);return v.z/v.w;}
+  void main(){float c=vz(vUv),s=0.,w=0.;
+    for(int x=-2;x<=2;x++)for(int y=-2;y<=2;y++){vec2 uv=vUv+vec2(float(x),float(y))*uTexel;float wt=max(0.,1.-abs(vz(uv)-c)/(uRadius*.5))+.001;s+=texture2D(tAOin,uv).r*wt;w+=wt;}
+    gl_FragColor=vec4(vec3(s/w),1.);}`});
+const aoSize=new THREE.Vector2();
+function computeAO(){
+  if(!settings.ao){AOU.uAOOn.value=0;return;}
+  renderer.getDrawingBufferSize(aoSize);const w=Math.max(1,Math.ceil(aoSize.x/2)),h=Math.max(1,Math.ceil(aoSize.y/2));
+  if(!ndRT||ndRT.width!==w||ndRT.height!==h)makeAORTs(w,h);
+  AOU.uAOOn.value=0;
+  const hide=[floor,gizmoGroup,cursor],vis=hide.map(o=>o.visible);hide.forEach(o=>o.visible=false);
+  const bg=scene.background;scene.background=null;scene.overrideMaterial=aoNormalMat;
+  renderer.setRenderTarget(ndRT);renderer.setClearColor(0x8080ff,1);renderer.clear();renderer.render(scene,camera);
+  scene.overrideMaterial=null;scene.background=bg;hide.forEach((o,i)=>o.visible=vis[i]);
+  const rad=nV?clamp(meshBounds().r*.11,.05,.4):.16;
+  aoMat.uniforms.tDepth.value=ndRT.depthTexture;aoMat.uniforms.tNormal.value=ndRT.texture;aoMat.uniforms.uProj.value.copy(camera.projectionMatrix);aoMat.uniforms.uInvProj.value.copy(camera.projectionMatrixInverse);aoMat.uniforms.uRadius.value=rad;
+  quad.material=aoMat;renderer.setRenderTarget(aoRT);renderer.render(quadScene,quadCam);
+  blurMat.uniforms.tAOin.value=aoRT.texture;blurMat.uniforms.tDepth.value=ndRT.depthTexture;blurMat.uniforms.uTexel.value.set(1/w,1/h);blurMat.uniforms.uInvProj.value.copy(camera.projectionMatrixInverse);blurMat.uniforms.uRadius.value=rad;
+  quad.material=blurMat;renderer.setRenderTarget(blurRT);renderer.render(quadScene,quadCam);
+  renderer.setRenderTarget(null);renderer.setClearColor(0,0);
+  AOU.tAO.value=blurRT.texture;AOU.uRes.value.copy(aoSize);AOU.uAOOn.value=1;
+}
 
 /* chão que só recebe sombra (render) */
 const floorMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:Object.assign({uC:{value:new THREE.Vector3()},uR:{value:1.5},uDark:{value:.6}},SHU),
@@ -1646,6 +1698,7 @@ function applyStageUI(){
   buildRail();if(curTool())setTool(curTool());updateCounts();refreshUndo();cursor.visible=false;armSel=null;
 }
 document.querySelectorAll('.stg').forEach(b=>b.onclick=()=>goStage(b.dataset.stage));
+/* Armação e Massa estão desativadas por enquanto; o código continua aqui para voltar no futuro. */
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goStage(b.dataset.go));
 
 /* =================== Interface =================== */
@@ -1691,6 +1744,7 @@ REMESH_RES.forEach(q=>{const b=document.createElement('button');b.dataset.v=q.v;
 [...$('remeshRes').children].forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===settings.remeshRes));
 $('remeshBtn').onclick=()=>doRemesh(null);
 $('tTilt').onclick=()=>setToggle('tTilt','tilt',!settings.tilt);
+$('tAO').onclick=()=>setToggle('tAO','ao',!settings.ao);
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
 $('settingsBtn').onclick=()=>{const o=$('side').classList.toggle('open');$('settingsBtn').setAttribute('aria-expanded',o);};
 let toastT=0;function toast(t){const m=$('toast');m.textContent=t;m.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>m.classList.remove('show'),1600);}
@@ -1755,11 +1809,11 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function setSaveState(kind,text){const el=$('saveState');el.className='save-state'+(kind?' '+kind:'');el.querySelector('span').textContent=text;el.title=text;}
-function drawFrame(){if(stage!=='sculpt'&&stage!=='paint'&&stage!=='render')rebuildChunks();updateCamera();if(stage==='render'){placeGizmos();renderShadow();}else SHU.uShadowOn.value=0;renderer.render(scene,camera);}
+function drawFrame(){if(stage!=='sculpt'&&stage!=='paint'&&stage!=='render')rebuildChunks();updateCamera();if(stage==='render'){placeGizmos();renderShadow();}else SHU.uShadowOn.value=0;computeAO();renderer.render(scene,camera);}
 function captureThumb(size){
   const was=cursor.visible,gv=gizmoGroup.visible;cursor.visible=false;gizmoGroup.visible=false;drawFrame();
   const src=renderer.domElement,c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
-  const g=x.createRadialGradient(size/2,size*.35,0,size/2,size/2,size*.75);g.addColorStop(0,'#2b2620');g.addColorStop(1,'#14110f');x.fillStyle=g;x.fillRect(0,0,size,size);
+  const g=x.createRadialGradient(size/2,size*.35,0,size/2,size/2,size*.75);g.addColorStop(0,'#333336');g.addColorStop(1,'#141415');x.fillStyle=g;x.fillRect(0,0,size,size);
   const s=Math.min(src.width,src.height);x.drawImage(src,(src.width-s)/2,(src.height-s)/2,s,s,0,0,size,size);cursor.visible=was;gizmoGroup.visible=gv;return c.toDataURL('image/jpeg',.82);}
 function toBytes(m,sq){const out=new Uint8Array(m.length);for(let i=0;i<m.length;i++)out[i]=Math.round((sq&&(i%4)!==3?Math.sqrt(clamp(m[i],0,1)):clamp(m[i],0,1))*255);return out;}
 function fromBytes(buf,n,sq){const u=new Uint8Array(buf||new ArrayBuffer(0)),out=new Float32Array(n);if(u.length!==n)return out;for(let i=0;i<n;i++){const v=u[i]/255;out[i]=sq&&(i%4)!==3?v*v:v;}return out;}
@@ -1801,7 +1855,8 @@ async function applyRecord(rec){
     sculptState={pos:P,idx:icoIndices(),mask:fromBytes(rec.mask,163842),paint:new Float32Array(163842*4),fromVer:0,edited:true};st='sculpt';
   }else arm=NO_ARM();
   rebuildArm();
-  if(meshStageId(st)&&!sculptState)st=ops.length?'mass':'arm';
+  if(!meshStageId(st))st='sculpt';
+  if(!sculptState&&!ops.length){ops=[{t:'ball',a:[0,-.82,0],r:.95,irr:.22,seed:7,sid:1}];opsVer=1;}
   stage='';await goStage(st,{silent:true,noFrame:true,force:true,keep:true});view('frame',true);lsSet('atelie:last',rec.id);
 }
 const meshStageId=s=>s==='sculpt'||s==='paint'||s==='render';
@@ -1810,7 +1865,8 @@ async function newPiece(kind){
   const all=db?await dbAll().catch(()=>[]):[];
   resetPieceState();setFinish('clay');
   current={id:uid(),name:'Estudo '+(all.length+1),created:Date.now(),updated:Date.now()};$('pieceName').value=current.name;
-  if(['human','animal','bust','free'].includes(kind)){arm=tpl(kind);rebuildArm();stage='';await goStage('arm',{force:true,noFrame:true});view('frame',true);}
+  if(['human','animal','bust','free','empty'].includes(kind))kind='ball';
+  if(false){arm=tpl(kind);rebuildArm();stage='';await goStage('arm',{force:true,noFrame:true});view('frame',true);}
   else if(kind==='empty'){arm=NO_ARM();rebuildArm();stage='';await goStage('mass',{force:true,noFrame:true});view('frame',true);}
   else{
     arm=NO_ARM();rebuildArm();
@@ -1833,7 +1889,7 @@ function timeAgo(t){const s=(Date.now()-t)/1000;if(s<60)return'agora';if(s<3600)
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function primCard(p,box,cls){const b=document.createElement('button');b.className='prim'+(cls?' '+cls:'');b.innerHTML=svg(p.icon,1.5)+`<b>${p.name}</b><span>${p.desc}</span>`;
   b.onclick=async()=>{closeModals();await busy('Preparando a peça…');try{await newPiece(p.id);}finally{$('busy').hidden=true;}toast('Peça nova: '+current.name);};box.appendChild(b);}
-CLAY_STARTS.forEach(p=>primCard(p,$('primsClay')));ARM_TEMPLATES.forEach(p=>primCard(p,$('primsArm'),'wire'));
+CLAY_STARTS.filter(p=>p.id!=='empty').forEach(p=>primCard(p,$('primsClay')));
 const STAGE_LABEL={arm:'Armação',mass:'Massa',sculpt:'Escultura',paint:'Pintura',render:'Render'};
 async function renderLibrary(){
   const box=$('pieces');
@@ -1906,7 +1962,7 @@ function renderImage(){
   let fovE=fov0;if(!fr.full){fovE=2*Math.atan(Math.tan(fov0*Math.PI/360)*fr.h/vh)*180/Math.PI;}
   const was=cursor.visible,gv=gizmoGroup.visible;cursor.visible=false;gizmoGroup.visible=false;
   renderer.setPixelRatio(1);renderer.setSize(W,Hh,false);camera.aspect=W/Hh;camera.fov=fovE;camera.updateProjectionMatrix();
-  updateCamera();renderShadow();renderer.render(scene,camera);
+  updateCamera();renderShadow();computeAO();renderer.render(scene,camera);
   const c=document.createElement('canvas');c.width=W;c.height=Hh;const x=c.getContext('2d');x.drawImage(renderer.domElement,0,0);
   if(R.vig){const g=x.createRadialGradient(W/2,Hh*.45,Math.min(W,Hh)*.35,W/2,Hh/2,Math.hypot(W,Hh)*.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.42)');x.fillStyle=g;x.fillRect(0,0,W,Hh);}
   const url=c.toDataURL('image/png');
@@ -1979,7 +2035,7 @@ function frame(){
   drawFrame();requestAnimationFrame(frame);
 }
 paintRange($('stab'));paintRange($('irr'));setDry(18);setClay(0);setLight('atelie');setFinish('clay');setPaintColor(PAINTS[2].hex);makeBg();resize();
-arm=NO_ARM();rebuildArm();stage='mass';applyStageUI();updateCamera();requestAnimationFrame(frame);
+arm=NO_ARM();rebuildArm();stage='sculpt';applyStageUI();updateCamera();requestAnimationFrame(frame);
 (async function boot(){
   db=await openDB();let opened=false;
   if(db){try{const all=(await dbAll()).sort((a,b)=>b.updated-a.updated);const rec=all.find(r=>r.id===lsGet('atelie:last'))||all[0];if(rec){await applyRecord(rec);opened=true;}}catch(e){}}
